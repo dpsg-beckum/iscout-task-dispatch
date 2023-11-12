@@ -2,8 +2,11 @@ import discord
 from discord.ext import commands
 import json
 from pprint import pprint
+import json
+import redis
 
-# Bot token
+r = redis.Redis(host='localhost', port=6379, db=0, protocol=3)
+
 token = json.load(open('secrets.json'))['discord']['bot']['token']
 
 
@@ -53,11 +56,16 @@ async def on_ready():
     print(f'Logged in as {client.user.name}')
     channel = json.load(open('secrets.json'))['discord']['channels']['taskteam-1']
     msgres =await send_message_to_channel(channel, "Hello World")
+    data = json.dumps({"channel" : channel, "msgid":msgres.id})
+    print(type(data))
+    r.set('taskteam1:currenmsg', data)
     print(type(msgres))
     print(msgres)
     print()
     print(msgres.id)
     print()
+    await client.close()
+    exit()
 
 
 
