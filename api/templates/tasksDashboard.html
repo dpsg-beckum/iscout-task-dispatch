@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .status-created {
+            color: blue;
+        }
+
+        .status-in-progress {
+            color: orange;
+        }
+
+        .status-completed {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Tasks Dashboard</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Task ID</th>
+        <th>Description</th>
+        <th>Team ID</th>
+        <th>Last Updated</th>
+        <th>Status</th>
+    </tr>
+    </thead>
+    <tbody id="taskList"></tbody>
+</table>
+
+<script>
+  function fetchTasks() {
+      fetch('/api/task')
+          .then(response => response.json())
+          .then(tasks => displayTasks(tasks));
+  }
+
+  function displayTasks(tasks) {
+      const taskList = document.getElementById('taskList');
+
+      // Sort tasks by ID
+      tasks.task_id.sort((a, b) => a - b);
+
+      tasks.task_id.forEach(taskId => {
+          fetch(`/api/task/${taskId}`)
+              .then(response => response.json())
+              .then(task => {
+                  const row = document.createElement('tr');
+
+                  const taskIdElement = document.createElement('td');
+                  taskIdElement.textContent = taskId;
+                  row.appendChild(taskIdElement);
+
+                  const descriptionElement = document.createElement('td');
+                  descriptionElement.textContent = task.description;
+                  row.appendChild(descriptionElement);
+
+                  teamname = fetch(`/api/team/${task.team}`).name;
+                  if(teamname == undefined) {teamname = "Kein Team Zugewiesen"}
+                  const teamIdElement = document.createElement('td');
+                  teamIdElement.textContent = teamname;
+                  row.appendChild(teamIdElement);
+
+                  const lastUpdatedElement = document.createElement('td');
+                  const lastUpdatedDate = new Date(task.lastupdated * 1000);
+                  lastUpdatedElement.textContent = lastUpdatedDate.toLocaleString();
+                  row.appendChild(lastUpdatedElement);
+
+                  const statusElement = document.createElement('td');
+                  statusElement.textContent = task.status;
+                  statusElement.className = `status-${task.status.toLowerCase()}`;
+                  row.appendChild(statusElement);
+
+                  taskList.appendChild(row);
+              });
+      });
+  }
+
+  fetchTasks();
+</script>
+
+</body>
+</html>
