@@ -18,14 +18,16 @@ create table Team (
 );
 create table Task (
 	task_id int primary key not null unique,
+    name tinytext,
     description longtext,
     team_id int,
     foreign key (team_id) references Team(team_id)
 );
 create table TaskHasStatus (
+	taskStatus_id int not null primary key auto_increment,
 	task_id int not null,
     status_id int not null,
-    timestamp timestamp,
+    timestamp datetime,
     foreign key (task_id) references Task(task_id),
     foreign key (status_id) references Status(status_id)
 );
@@ -36,3 +38,5 @@ create table TaskHasStatus (
 #show tables;
 #show columns from Task;
 show columns from TaskHasStatus;
+select * from Task;
+select * from TaskHasStatus;
