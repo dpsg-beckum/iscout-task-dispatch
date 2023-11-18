@@ -33,44 +33,45 @@ class dbInterface():
     self.__mydb.commit()
     return mycursor
 
-  def setTaskName(self, task_id: int, name: str):
+
+  def setTaskName(self, taskID: int, name: str):
     try:
-      self.__dbCommit(f'UPDATE Task SET name = "{name}" WHERE task_id = {task_id}')
+      self.__dbCommit(f'UPDATE Task SET name = "{name}" WHERE taskID = {taskID}')
       #print(mycursor.rowcount, "record inserted.")
     except mysql.connector.errors.IntegrityError:
       raise DBerror("Proably no key")
 
 
-  def setTaskDescription(self, task_id: int, description: str):
+  def setTaskDescription(self, taskID: int, description: str):
     try:
-      self.__dbCommit(f'UPDATE Task SET description = "{description}" WHERE task_id = {task_id}')
+      self.__dbCommit(f'UPDATE Task SET description = "{description}" WHERE taskID = {taskID}')
       #print(mycursor.rowcount, "record inserted.")
     except mysql.connector.errors.IntegrityError:
       raise DBerror("Proably no key")
 
 
-  def setTaskStatus(self, task_id: int, status_id: int):
+  def setTaskStatus(self, taskID: int, statusID: int):
     try:
-      self.__dbCommit(f'INSERT INTO TaskHasStatus (task_id, status_id, timestamp) VALUES ({task_id}, {status_id}, "{datetime.now().strftime(r"%Y-%m-%d %H:%M:%S")}")')
+      self.__dbCommit(f'INSERT INTO TaskHasStatus (taskID, statusID, timestamp) VALUES ({taskID}, {statusID}, "{datetime.now().strftime(r"%Y-%m-%d %H:%M:%S")}")')
       # print(mycursor.rowcount, "record inserted.")
     except mysql.connector.errors.IntegrityError:
       raise DuplicateEntry("Key already Exists")
     
 
-  def createTask(self, task_id: int, name = "", description = ""):
+  def createTask(self, taskID: int, name = "", description = ""):
     """
     Creats Task if not exists
     """
     
     try:
-      self.__dbCommit(f'INSERT INTO Task (task_id) VALUES ({task_id})')
+      self.__dbCommit(f'INSERT INTO Task (taskID) VALUES ({taskID})')
     except mysql.connector.errors.IntegrityError as ex:
       # logging.error("already Exists")
       raise DuplicateEntry("Task already Exists")
     
-    self.setTaskStatus(task_id,1)
-    self.setTaskName(task_id, name)
-    self.setTaskDescription(task_id, description)
+    self.setTaskStatus(taskID,1)
+    self.setTaskName(taskID, name)
+    self.setTaskDescription(taskID, description)
 
 
   def getAllTasks(self):
@@ -86,19 +87,19 @@ class dbInterface():
     return result_list
 
 
-  def createTeam(self, team_id:int, name:str):
+  def createTeam(self, teamID:int, name:str):
     try:
-      self.__dbCommit(f'INSERT INTO Team (team_id, name) VALUES ({team_id}, "{name}")')
+      self.__dbCommit(f'INSERT INTO Team (teamID, name) VALUES ({teamID}, "{name}")')
     except mysql.connector.errors.IntegrityError:
       raise DuplicateEntry("Key already Exists")
 
 
-  def asignTask(self, task_id: int, team_id: int):
+  def asignTask(self, taskID: int, teamID: int):
     try:
-      self.__dbCommit(f'UPDATE Task SET team_id = {team_id} WHERE task_id = {task_id}')
+      self.__dbCommit(f'UPDATE Task SET teamID = {teamID} WHERE taskID = {taskID}')
     except mysql.connector.errors.IntegrityError:
       raise DBerror("Probobly no Team")
-    self.setTaskStatus(task_id, 2)
+    self.setTaskStatus(taskID, 2)
 
 
 if __name__ == "__main__":

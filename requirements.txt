@@ -1,2 +1,9 @@
-flask
-redis
+Flask
+SQLAlchemy
+Flask-DB
+Flask-SQLAlchemy
+SQLAlchemy-Utils
+flask_restful
+flask_cors
+
+

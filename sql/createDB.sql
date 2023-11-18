@@ -2,7 +2,7 @@ drop database if exists iScout;
 create database IF NOT EXISTS iScout;
 use iScout;
 create table Status (
-	status_id int primary key not null unique,
+	statusID int primary key not null unique,
     name tinytext
 );
 insert into Status values 
@@ -13,23 +13,23 @@ insert into Status values
     (5, "Failed");
 
 create table Team (
-	team_id int not null primary key unique,
+	teamID int not null primary key unique,
     name tinytext
 );
 create table Task (
-	task_id int primary key not null unique,
+	taskID int primary key not null unique,
     name tinytext,
     description longtext,
-    team_id int,
-    foreign key (team_id) references Team(team_id)
+    teamID int,
+    foreign key (teamID) references Team(teamID)
 );
 create table TaskHasStatus (
-	taskStatus_id int not null primary key auto_increment,
-	task_id int not null,
-    status_id int not null,
+	taskstatusID int not null primary key auto_increment,
+	taskID int not null,
+    statusID int not null,
     timestamp datetime,
-    foreign key (task_id) references Task(task_id),
-    foreign key (status_id) references Status(status_id)
+    foreign key (taskID) references Task(taskID),
+    foreign key (statusID) references Status(statusID)
 );
 
 

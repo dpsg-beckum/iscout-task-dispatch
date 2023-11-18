@@ -68,9 +68,9 @@
       const taskList = document.getElementById('taskList');
 
       // Sort tasks by ID
-      tasks.task_id.sort((a, b) => a - b);
+      tasks.taskID.sort((a, b) => a - b);
 
-      tasks.task_id.forEach(taskId => {
+      tasks.taskID.forEach(taskId => {
           fetch(`/api/task/${taskId}`)
               .then(response => response.json())
               .then(task => {
