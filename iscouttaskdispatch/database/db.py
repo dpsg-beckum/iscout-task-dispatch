@@ -28,3 +28,19 @@ class TaskHasStatus(db.Model):
     taskID = Column(Integer, ForeignKey('Task.taskID'), nullable=False)
     statusID = Column(Integer, ForeignKey('Status.statusID'), nullable=False)
     timestamp = Column(DateTime)
+
+def seed_status_table():
+    # Assuming that the Status table is empty
+    statuses = [
+        {"statusID": 1, "name": "Created"},
+        {"statusID": 2, "name": "Assigned"},
+        {"statusID": 3, "name": "Work in Progress"},
+        {"statusID": 4, "name": "Done"},
+        {"statusID": 5, "name": "Failed"}
+    ]
+
+    for status_data in statuses:
+        status = Status(**status_data)
+        db.session.add(status)
+
+    db.session.commit()
