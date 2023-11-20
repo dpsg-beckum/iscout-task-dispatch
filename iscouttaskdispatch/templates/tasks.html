@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Task List{% endblock %}
+
+{% block content %}
+    <div class="navbar">
+        <a href="{{ url_for('site.createTaskSite') }}">Create New</a>
+        <a href="{{ url_for('site.deleteTaskSite') }}">Delete</a>
+    </div>
+    <h1>Tasks</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Task ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Team</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+                <tr>
+                    <td>{{ task.taskID }}</td>
+                    <td>{{ task.name }}</td>
+                    <td>
+                        {% autoescape false %}
+                        {{ task.description }}
+                        {% endautoescape %}
+                    </td>
+                    <td>{{ task.teamID }}</td>
+                    <td>
+                        <a href="{{ url_for('site.editTask', taskID=task.taskID) }}">Edit</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

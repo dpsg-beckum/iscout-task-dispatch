@@ -22,8 +22,8 @@ def task(taskID):
         if not request.args.get("name") or not request.args.get("description"):
             abort(400)
         return database.createTask(taskID,
-                                   str(request.args.get("name")).replace('"',''),
-                                   str(request.args.get("description")).replace('"',''))
+                                   str(request.args.get("name")),
+                                   str(request.args.get("description")))
     
     if request.method == 'DELETE':
         return database.deleteTask(taskID)

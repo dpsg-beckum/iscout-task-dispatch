@@ -1,0 +1,23 @@
+<!-- delete_task.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Delete Task{% endblock %}
+
+{% block content %}
+    <h1>Delete Task</h1>
+    <p>Enter the ID of the task you want to delete:</p>
+    <form action="{{ url_for('site.deleteTaskSite') }}" method="post">
+        <label for="taskID">Task ID:</label>
+        <input type="number" id="taskID" name="taskID" required>
+        <br>
+        <input type="submit" value="Delete Task">
+    </form>
+    {% if error_message %}
+        <div class="error-message">
+            {{ error_message }}
+        </div>
+    {% endif %}
+    <br>
+    <a href="{{ url_for('site.showAllTasks') }}">Back to Task List</a>
+{% endblock %}
