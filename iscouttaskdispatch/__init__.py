@@ -1,6 +1,5 @@
 from flask import Flask
 from pathlib import Path
-
 from .site import site
 from .api import api
 
@@ -16,6 +15,7 @@ def create_app():
     db_path = Path(app.instance_path)
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path.absolute()}'
     app.config['FLASK_DB_SEEDS_PATH'] = (Path(app.root_path) / "./seeds.py").absolute()
+    #app.config['SQLALCHEMY_ECHO'] = True  # Enable echoing of SQL statements
 
     print(db_path)
 
@@ -34,8 +34,7 @@ def create_app():
             if Path.exists(seeds_path):
                 exec(open(seeds_path).read())
             else:
-                app.logger.error(
-                    "Could not seed database because of a missing file")
+                app.logger.error("Could not seed database because of a missing file")
     else:
         print("DB already created")
 
