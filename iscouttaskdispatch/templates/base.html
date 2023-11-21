@@ -11,9 +11,10 @@
     <div class="navbar">
         <a href="{{ url_for('site.index') }}">Home</a>
         <a href="{{ url_for('site.showAllTasks') }}">Tasks</a>
+        <a href="{{ url_for('site.showAllTeams') }}">Teams</a>
         <!-- Add more navigation links as needed -->
     </div>
-    <div class="content", style="padding: 1%;">
+    <div class="content">
         {% block content %}{% endblock %}
     </div>
 </body>

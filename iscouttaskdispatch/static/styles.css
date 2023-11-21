@@ -53,6 +53,7 @@ input, textarea {
 
 input[type="submit"] {
     background-color: #4caf50;
+    margin-top: 10px;
     color: white;
     cursor: pointer;
 }
@@ -78,6 +79,7 @@ input[type="submit"] {
 .navbar {
     overflow: hidden;
     background-color: #333;
+    width: 100%;
 }
 
 .navbar a {
@@ -92,4 +94,65 @@ input[type="submit"] {
 .navbar a:hover {
     background-color: #ddd;
     color: black;
+}
+
+.taskUpdate {
+    width: fit-content;
+    padding: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-bottom: 0px;
+    box-sizing: content-box;
+    font-size: medium;
+}
+
+.status-created {
+    color: blue; /* Change the color based on your preference */
+}
+.status-assigned {
+    color: green;
+}
+.status-work-in-progress {
+    color: orange;
+}
+.status-done {
+    color: purple;
+}
+.status-failed {
+    color: red;
+}
+
+.statusfield {
+    font-weight: bold;
+    width: fit-content;
+}
+
+.row {
+    display: flex; /* equal height of the children */
+}
+  
+.col {
+    flex: 1; /* additionally, equal width */
+
+    padding: 1em;
+}
+
+.form-inline {  
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+  }
+  
+  .form-inline label {
+    margin: 5px 10px 5px 0;
+  }
+  
+  .form-inline input {
+    vertical-align: middle;
+    margin: 1% 1% 1% 1%;
+
+  }
+  
+.page-div {
+    margin: 1%;
 }

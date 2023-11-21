@@ -3,6 +3,12 @@ from .json_encoder import DatabaseEncoder
 from .db import Team, Task, TaskHasStatus, Status
 from datetime import datetime as dt
 from .exceptions import *
+from pprint import pprint
+from sqlalchemy import desc
+
+
+def getAllTaskHasStatus():
+    return [DatabaseEncoder.default(i) for i in TaskHasStatus.query.all()]
 
 def setTaskName(taskID: int, name: str):
     task : Task = Task.query.get(taskID)
@@ -24,6 +30,7 @@ def createTask(taskID:int, name:str, description: str):
     if not Task.query.get(taskID):
         db.session.add(Task(taskID = taskID, name=name, description=description))
         db.session.commit()
+        setTaskStatus(taskID,1)
         return DatabaseEncoder.default(Task.query.get(taskID))
     else:
         raise ElementAlreadyExists()
@@ -36,7 +43,9 @@ def deleteTask(taskID: int):
         raise ElementDoesNotExsist()
 
 def getAllTeams():
-    return [DatabaseEncoder.default(i) for i in Team.query.all()]
+    results = [DatabaseEncoder.default(i) for i in Team.query.all()]
+    #pprint(results)
+    return results
 
 def getTeamViaID(teamID:int):
     return DatabaseEncoder.default(Team.query.get(teamID))
@@ -63,8 +72,50 @@ def setTaskStatus(taskID: int, statusID: int):
     pass
 
 def assignTask(taskID: int, teamID: int):
+    #print(f"assigning {taskID} {type(taskID)} to {teamID} {type(teamID)}")
     task : Task = Task.query.get(taskID)
     task.teamID = teamID
     db.session.commit()
-    setTaskStatus(taskID, 2)
+    if teamID == None:
+        pass
+    else:
+        setTaskStatus(taskID, 2)
 
+def getStatusOfTask(taskID: int):
+    status_entry :TaskHasStatus = TaskHasStatus.query.filter_by(taskID=taskID).order_by(desc(TaskHasStatus.timestamp)).first()
+
+    if status_entry:
+        # Retrieve the statusID from the status entry
+        statusID = status_entry.statusID
+
+        # Query the Status table to get the status name based on statusID
+        status : Status = Status.query.get(statusID)
+
+        result = {
+            'statusID':statusID,
+            'name': status.name,
+            'timestamp': status_entry.timestamp
+        }
+
+        return result
+    else:
+        # If no status entry is found, the task might not have a status yet
+        return {
+            'statusID':0,
+            'name': "ERROR",
+            'timestamp': dt.now()
+        }
+
+def getAllStatusesOfTask(taskID: int):
+    stati = {s.statusID:s.name for s in Status.query.all()}
+    status_entrys = TaskHasStatus.query.filter_by(taskID=taskID).order_by(desc(TaskHasStatus.timestamp)).all()
+
+
+    result = []
+    entry : TaskHasStatus
+    for entry in status_entrys:
+        r = {'name' : stati[entry.statusID],
+             'timestamp' : entry.timestamp}
+        result.append(r)
+
+    return result
