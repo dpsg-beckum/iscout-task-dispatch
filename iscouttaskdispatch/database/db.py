@@ -3,6 +3,9 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey
 from datetime import datetime
 
+
+
+
 db = SQLAlchemy()
 
 class Status(db.Model):
@@ -21,11 +24,12 @@ class Task(db.Model):
     name = Column(String(255))
     description = Column(Text)
     teamID = Column(Integer, ForeignKey('Team.teamID'))
+    task_has_statuses = relationship('TaskHasStatus', cascade='all, delete-orphan')
 
 class TaskHasStatus(db.Model):
     __tablename__ = 'TaskHasStatus'
     taskstatusID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-    taskID = Column(Integer, ForeignKey('Task.taskID'), nullable=False)
+    taskID = Column(Integer, ForeignKey('Task.taskID', ondelete='CASCADE'), nullable=False)
     statusID = Column(Integer, ForeignKey('Status.statusID'), nullable=False)
     timestamp = Column(DateTime)
 
