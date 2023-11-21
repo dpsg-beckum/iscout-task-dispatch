@@ -1,5 +1,6 @@
 from flask import Blueprint, request, Response, abort, jsonify
 from ..database import handel as database
+from ..database.exceptions import *
 api_routes = Blueprint("api", __name__, template_folder="templates",
                        url_prefix="")
 
@@ -21,12 +22,18 @@ def task(taskID):
     if request.method == 'POST':
         if not request.args.get("name") or not request.args.get("description"):
             abort(400)
-        return database.createTask(taskID,
-                                   str(request.args.get("name")),
-                                   str(request.args.get("description")))
+        try:
+            return database.createTask(taskID,
+                                    str(request.args.get("name")),
+                                    str(request.args.get("description")))
+        except ElementAlreadyExists:
+            abort(409)
     
     if request.method == 'DELETE':
-        return database.deleteTask(taskID)
+        try:
+            return database.deleteTask(taskID)
+        except ElementDoesNotExsist:
+            abort(409)
 
 @api_routes.route("/team", methods=['GET'])
 def AllTeams():
@@ -45,10 +52,16 @@ def team(teamID):
     if request.method == 'POST':
         if not request.args.get("name"):
             abort(400)
-        return database.createTeam(teamID, name=str(request.args.get("name")))
-        
+        try:
+            return database.createTeam(teamID, name=str(request.args.get("name")))
+        except ElementAlreadyExists:
+            abort(409)
+
     if request.method == 'DELETE':
-        return database.deleteTeam(teamID)
+        try:
+            return database.deleteTeam(teamID)
+        except ElementDoesNotExsist:
+            abort(409)
 
 @api_routes.route("/assignTask/<taskID>/<teamID>", methods=['PUT'])
 def assignTask(taskID,teamID):
