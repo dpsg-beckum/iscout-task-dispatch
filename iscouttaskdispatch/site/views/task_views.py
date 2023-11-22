@@ -4,9 +4,9 @@ from ...database.handel import *
 from .tools import formatDatetime
 from flask import Blueprint
 
-tasks_site = Blueprint("tasks_site", __name__, template_folder="../templates/task")
+tasks_site = Blueprint("tasks_site", __name__, template_folder="../templates/task", url_prefix="/tasks")
 
-@tasks_site.route("/tasks")
+@tasks_site.route("/")
 def showAllTasks():
     teams = {i['teamID']:i['name'] for i in getAllTeams()}
     tasks = getAllTasks()
@@ -20,7 +20,7 @@ def showAllTasks():
     return render_template("task/index.html", tasks=tasks, teams=getAllTeams())
 
 
-@tasks_site.route("/tasks/<int:taskID>/edit")
+@tasks_site.route("/<int:taskID>/edit")
 def editTask(taskID):
     task = getTaskViaID(taskID)
     status = getStatusOfTask(task['taskID'])
@@ -28,9 +28,8 @@ def editTask(taskID):
     return render_template("task/edit.html", task=task)
 
 
-@tasks_site.route("/tasks/<int:taskID>/update", methods=["POST"])
+@tasks_site.route("/<int:taskID>/update", methods=["POST"])
 def updateTask(taskID):
-    print("UPDATING TASK")
     name = request.form.get("name")
     description = request.form.get("description")
     status = int(request.form.get("new_status"))
@@ -42,7 +41,7 @@ def updateTask(taskID):
     return redirect(url_for("site.tasks_site.showAllTasks"))
 
 
-@tasks_site.route("/tasks/create", methods=["GET", "POST"])
+@tasks_site.route("/create", methods=["GET", "POST"])
 def createTaskSite():
     error_message = None
     form_data = {"taskID": None, "name": "", "description": ""}
@@ -61,7 +60,7 @@ def createTaskSite():
     return render_template("task/create.html", error_message=error_message, form_data=form_data)
 
 
-@tasks_site.route("/tasks/<int:taskID>/delete", methods=["POST"])
+@tasks_site.route("/<int:taskID>/delete", methods=["POST"])
 def deleteTaskSite(taskID):
     error_message = None
     if request.method == "POST":
@@ -75,19 +74,14 @@ def deleteTaskSite(taskID):
     return render_template("task/delete.html", error_message=error_message)
 
 
-@tasks_site.route("/tasks/<int:taskID>/assign", methods=["POST"])
+@tasks_site.route("/<int:taskID>/assign", methods=["POST"])
 def assignTaskSite(taskID):
     teamID = request.form.get("team", type=int)
     assignTask(taskID, teamID, "Assigned via WEB UI")
     return redirect(url_for("site.tasks_site.showAllTasks"))
 
 
-@tasks_site.route("/task")
-def redirectToTasks():
-    return redirect(url_for("site.Tasks"))
-
-
-@tasks_site.route("/tasks/<taskID>")
+@tasks_site.route("/<taskID>")
 def specificTask(taskID):
     teams = {i['teamID']:i['name'] for i in getAllTeams()}
     statuses = getAllStatusesOfTask(int(taskID))
