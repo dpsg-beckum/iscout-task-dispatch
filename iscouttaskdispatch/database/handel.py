@@ -26,11 +26,11 @@ def getAllTasks():
 def getTaskViaID(taskID : int):
     return DatabaseEncoder.default(Task.query.get(taskID))
 
-def createTask(taskID:int, name:str, description: str):
+def createTask(taskID:int, name:str, description: str, how:str = ""):
     if not Task.query.get(taskID):
         db.session.add(Task(taskID = taskID, name=name, description=description))
         db.session.commit()
-        setTaskStatus(taskID,1)
+        setTaskStatus(taskID,1, how)
         return DatabaseEncoder.default(Task.query.get(taskID))
     else:
         raise ElementAlreadyExists()
@@ -51,8 +51,8 @@ def getTeamViaID(teamID:int):
     return DatabaseEncoder.default(Team.query.get(teamID))
 
 def createTeam(teamID:int, name: str):
-    if not Team.query.get(teamID):
-        db.session.add(Team(teamID = teamID, name=name))
+    if not Team.query.get(int(teamID)):
+        db.session.add(Team(teamID = int(teamID), name=name))
         db.session.commit()
         return DatabaseEncoder.default(Team.query.get(teamID))
     else:
@@ -66,8 +66,8 @@ def deleteTeam(teamID:int):
     else:
         raise ElementDoesNotExsist()
 
-def setTaskStatus(taskID: int, statusID: int):
-    db.session.add(TaskHasStatus(taskID=taskID, statusID=statusID, timestamp=dt.now()))
+def setTaskStatus(taskID: int, statusID: int, text :str = ""):
+    db.session.add(TaskHasStatus(taskID=taskID, statusID=statusID, text=text, timestamp=dt.now()))
     db.session.commit()
     pass
 
@@ -79,7 +79,7 @@ def assignTask(taskID: int, teamID: int):
     if teamID == None:
         pass
     else:
-        setTaskStatus(taskID, 2)
+        setTaskStatus(taskID, 2, f"Assigned Task to Team {teamID}")
 
 def getStatusOfTask(taskID: int):
     status_entry :TaskHasStatus = TaskHasStatus.query.filter_by(taskID=taskID).order_by(desc(TaskHasStatus.timestamp)).first()
@@ -94,6 +94,7 @@ def getStatusOfTask(taskID: int):
         result = {
             'statusID':statusID,
             'name': status.name,
+            'text': status_entry.text,
             'timestamp': status_entry.timestamp
         }
 
@@ -114,7 +115,9 @@ def getAllStatusesOfTask(taskID: int):
     result = []
     entry : TaskHasStatus
     for entry in status_entrys:
+        print(type(entry.text))
         r = {'name' : stati[entry.statusID],
+             'text' : entry.text,
              'timestamp' : entry.timestamp}
         result.append(r)
 
