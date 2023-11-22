@@ -3,6 +3,7 @@
 {% block title %}Edit Team{% endblock %}
 
 {% block content %}
+<div class="page-div">
     <h1>Edit Team {{ team.teamID }}</h1>
     <form action="{{ url_for('site.teams_site.updateTeam', teamID=team.teamID) }}" method="post">
         <label for="name">Team Name:</label>
@@ -10,4 +11,5 @@
         <br>
         <input type="submit" value="Update Team">
     </form>
+</div>
 {% endblock %}

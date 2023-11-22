@@ -71,6 +71,11 @@ def setTaskStatus(taskID: int, statusID: int, text :str = ""):
     db.session.commit()
     pass
 
+def setTeamName(teamID: int, name: str):
+    team : Team = Team.query.get(teamID)
+    team.name = name
+    db.session.commit()
+
 def assignTask(taskID: int, teamID: int, msg :str = ""):
     #print(f"assigning {taskID} {type(taskID)} to {teamID} {type(teamID)}")
     task : Task = Task.query.get(taskID)

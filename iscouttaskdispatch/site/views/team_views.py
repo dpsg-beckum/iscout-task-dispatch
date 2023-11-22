@@ -1,5 +1,5 @@
 # site/views/team_views.py
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, abort
 from ...database.handel import *
 from flask import Blueprint
 
@@ -54,4 +54,13 @@ def showTeam(teamID):
 def editTeam(teamID):
     team = getTaskViaID(teamID)
     return render_template("team/edit.html", team=team)
-    
+
+@teams_site.route("/teams/<int:teamID>/update", methods=["POST"])
+def updateTeam(teamID):
+    name = request.form.get("name")
+    if name:
+        setTeamName(teamID, name)
+    else:
+        abort(400)
+
+    return redirect(url_for("site.teams_site.showAllTeams"))

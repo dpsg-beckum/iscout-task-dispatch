@@ -23,7 +23,11 @@
                     <tr>
                         <td>{{ team.teamID }}</td>
                         <td>{{ team.name }}</td>
-                        <td>Action</td>
+                        <td>
+                            <div>
+                                <a href="{{ url_for('site.teams_site.editTeam', teamID=team.teamID) }}">Edit</a>
+                            </div>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
