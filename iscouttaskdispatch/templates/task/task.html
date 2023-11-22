@@ -20,6 +20,7 @@
         <thead>
             <tr>
                 <th>Status</th>
+                <th>Text</th>
                 <th>Zeit</th>
             </tr>
         </thead>
@@ -30,6 +31,9 @@
                         <div class="{% if status.name == 'Created' %}status-created{% elif status.name == 'Assigned' %}status-assigned{% elif status.name == 'Work in Progress' %}status-work-in-progress{% elif status.name == 'Done' %}status-done{% elif status.name == 'Failed' %}status-failed{% endif %}">
                             {{ status.name }}
                         </div>
+                    </td>
+                    <td>
+                        {{ status.text }}
                     </td>
                     <td>{{ status.timestamp }}</td>
                 </tr>

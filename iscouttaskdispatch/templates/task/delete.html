@@ -5,6 +5,7 @@
 {% block title %}Delete Task{% endblock %}
 
 {% block content %}
+<div class="container">
     <h1>Delete Task</h1>
     <p>Enter the ID of the task you want to delete:</p>
     <form action="{{ url_for('site.deleteTaskSite') }}" method="post">
@@ -20,4 +21,5 @@
     {% endif %}
     <br>
     <a href="{{ url_for('site.showAllTasks') }}">Back to Task List</a>
+</div>
 {% endblock %}

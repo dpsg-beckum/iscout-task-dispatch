@@ -1,0 +1,25 @@
+<!-- delete_team.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Delete Team{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Delete Team</h1>
+    <p>Enter the ID of the team you want to delete:</p>
+    <form action="{{ url_for('site.deleteTeamSite') }}" method="post">
+        <label for="teamID">Team ID:</label>
+        <input type="number" id="teamID" name="teamID" required>
+        <br>
+        <input type="submit" value="Delete Team">
+    </form>
+    {% if error_message %}
+        <div class="error-message">
+            {{ error_message }}
+        </div>
+    {% endif %}
+    <br>
+    <a href="{{ url_for('site.showAllTeams') }}">Back to Team List</a>
+</div>
+{% endblock %}
