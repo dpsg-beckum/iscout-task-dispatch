@@ -44,7 +44,6 @@ def deleteTask(taskID: int):
 
 def getAllTeams():
     results = [DatabaseEncoder.default(i) for i in Team.query.all()]
-    #pprint(results)
     return results
 
 def getTeamViaID(teamID:int):
@@ -120,7 +119,6 @@ def getAllStatusesOfTask(taskID: int):
     result = []
     entry : TaskHasStatus
     for entry in status_entrys:
-        print(type(entry.text))
         r = {'name' : stati[entry.statusID],
              'text' : entry.text,
              'timestamp' : entry.timestamp}
