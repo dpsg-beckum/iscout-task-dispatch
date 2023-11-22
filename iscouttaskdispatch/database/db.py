@@ -31,6 +31,7 @@ class TaskHasStatus(db.Model):
     taskstatusID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     taskID = Column(Integer, ForeignKey('Task.taskID', ondelete='CASCADE'), nullable=False)
     statusID = Column(Integer, ForeignKey('Status.statusID'), nullable=False)
+    text = Column(Text)
     timestamp = Column(DateTime)
 
 def seed_status_table():
