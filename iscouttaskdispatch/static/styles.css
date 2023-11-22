@@ -58,6 +58,19 @@ input[type="submit"] {
     cursor: pointer;
 }
 
+.tasklink {
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+    padding: 2em;
+    margin: -2em;
+  }
+
+.tasklink a:hover {
+    background-color: #4caf50;
+    color: aqua;
+}
+
 .error-message {
     color: red;
     margin-top: 10px;

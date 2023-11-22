@@ -71,7 +71,7 @@ def setTaskStatus(taskID: int, statusID: int, text :str = ""):
     db.session.commit()
     pass
 
-def assignTask(taskID: int, teamID: int):
+def assignTask(taskID: int, teamID: int, msg :str = ""):
     #print(f"assigning {taskID} {type(taskID)} to {teamID} {type(teamID)}")
     task : Task = Task.query.get(taskID)
     task.teamID = teamID
@@ -79,7 +79,7 @@ def assignTask(taskID: int, teamID: int):
     if teamID == None:
         pass
     else:
-        setTaskStatus(taskID, 2, f"Assigned Task to Team {teamID}")
+        setTaskStatus(taskID, 2, msg)
 
 def getStatusOfTask(taskID: int):
     status_entry :TaskHasStatus = TaskHasStatus.query.filter_by(taskID=taskID).order_by(desc(TaskHasStatus.timestamp)).first()

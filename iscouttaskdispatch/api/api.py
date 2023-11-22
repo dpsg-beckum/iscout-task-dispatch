@@ -65,4 +65,4 @@ def team(teamID):
 
 @api_routes.route("/assignTask/<taskID>/<teamID>", methods=['PUT'])
 def assignTask(taskID,teamID):
-    return database.assignTask(taskID,teamID)
+    return database.assignTask(taskID,teamID, "Assigned via API")

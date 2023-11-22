@@ -4,8 +4,7 @@
 
 {% block content %}
 <div class="navbar">
-    <a href="{{ url_for('site.createTaskSite') }}">Create New</a>
-    <a href="{{ url_for('site.deleteTaskSite') }}">Delete</a>
+    <a href="{{ url_for('site.tasks_site.createTaskSite') }}">Create New</a>
 </div>
 <div class="page-div">
     <h1>Tasks</h1>
@@ -23,7 +22,7 @@
         <tbody>
             {% for task in tasks %}
                 <tr>
-                    <td><a href="{{ url_for('site.specificTask', taskID=task.taskID) }}">{{ task.taskID }}</a></td>
+                    <td><a class="tasklink" href="{{ url_for('site.tasks_site.specificTask', taskID=task.taskID) }}">{{ task.taskID }}</a></td>
                     <td>{{ task.name }}</td>
                     <td>
                         {% autoescape false %}
@@ -47,13 +46,16 @@
                         <div>
                             {{ task.statustimestamp }}
                         </div>
+                        <div>
+                            {{ task.statusText }}
+                        </div>
                     </td>
                     <td>
                         <div>
-                            <a href="{{ url_for('site.editTask', taskID=task.taskID) }}">Edit</a>
+                            <a href="{{ url_for('site.tasks_site.editTask', taskID=task.taskID) }}">Edit</a>
                         </div>
                         <div>
-                            <form class="form-inline" method="POST" action="{{ url_for('site.assignTaskSite', taskID=task.taskID) }}">
+                            <form class="form-inline" method="POST" action="{{ url_for('site.tasks_site.assignTaskSite', taskID=task.taskID) }}">
                                 <label for="team">Assign to Team:</label>
                                 <select name="team" id="team">
                                     <option {% if task.teamID is none %}selected{% endif %}>None</option>

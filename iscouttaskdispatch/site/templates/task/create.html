@@ -5,7 +5,7 @@
 {% block content %}
     <div class="container">
         <h1>Create Task</h1>
-        <form action="{{ url_for('site.createTaskSite') }}" method="post">
+        <form action="{{ url_for('site.tasks_site.createTaskSite') }}" method="post">
             <label for="taskID">Task ID:</label>
             <input type="number" id="taskID" name="taskID" value="{{ form_data['taskID'] }}" required>
             <br>
@@ -24,7 +24,7 @@
             </div>
         {% endif %}
         <br>
-        <a href="{{ url_for('site.showAllTasks') }}">Back to Task List</a>
+        <a href="{{ url_for('site.tasks_site.showAllTasks') }}">Back to Task List</a>
     </div>
     {% if error_message %}
     <div class="error-message">
