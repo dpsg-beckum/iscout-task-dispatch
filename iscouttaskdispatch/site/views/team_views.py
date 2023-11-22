@@ -29,12 +29,10 @@ def createTeamSite():
 
     return render_template("team/create.html", error_message=error_message, form_data=form_data)
 
-@teams_site.route("/delete", methods=["GET", "POST"])
-def deleteTeamSite():
+@teams_site.route("/<int:teamID>/delete", methods=["POST"])
+def deleteTeamSite(teamID):
     error_message = None
     if request.method == "POST":
-        teamID = int(request.form.get("teamID"))
-
         try:
             deleteTeam(teamID)
             return redirect(url_for("site.teams_site.showAllTeams"))
@@ -42,7 +40,7 @@ def deleteTeamSite():
             error_message = "Team with the provided ID does not exists."
             # You can handle the error as needed, such as displaying a message to the user.
 
-    return render_template("team/delete.html", error_message=error_message)
+    return render_template("error.html", error_message=error_message)
 
 
 @teams_site.route("/<int:teamID>")
@@ -53,7 +51,10 @@ def showTeam(teamID):
 @teams_site.route("/<int:teamID>/edit")
 def editTeam(teamID):
     team = getTeamViaID(teamID)
-    return render_template("team/edit.html", team=team)
+    if team:
+        return render_template("team/edit.html", team=team)
+    else:
+        return render_template("error.html", error_message="Task does not exist.")
 
 @teams_site.route("/<int:teamID>/update", methods=["POST"])
 def updateTeam(teamID):

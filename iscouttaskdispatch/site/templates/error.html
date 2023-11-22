@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Error!{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Whoops! Something went wrong.</h1>
+    {% if error_message %}
+    <div class="error-message">
+        {{ error_message }}
+    </div>
+{% endif %}
+</div>
+{% endblock %}
+

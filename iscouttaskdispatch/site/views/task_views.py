@@ -71,7 +71,7 @@ def deleteTaskSite(taskID):
             error_message = "Task with the provided ID does not exists."
             # You can handle the error as needed, such as displaying a message to the user.
 
-    return render_template("task/delete.html", error_message=error_message)
+    return render_template("error.html", error_message=error_message)
 
 
 @tasks_site.route("/<int:taskID>/assign", methods=["POST"])
