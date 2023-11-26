@@ -155,6 +155,9 @@
 
 
     function drawSite() {
+        if(Object.keys(site_data.tasks).length === 0) {
+            displaySocketError('No Data');
+        }
         drawPlot()
         console.log(site_data['tasks'])
         drawList("myTable", function(id) {return (id == 1)})
@@ -171,11 +174,11 @@
     });
 
     socket.on('disconnect', function() {
-        displaySocketError();
+        displaySocketError('Socket disconnected. Please refresh the page.');
 
     });
 
-    function displaySocketError() {
+    function displaySocketError(errmsg) {
         // Create a modal overlay
         var modalOverlay = document.createElement('div');
         modalOverlay.setAttribute('class', 'modal-overlay');
@@ -186,7 +189,16 @@
 
         // Create an error message
         var errorMessage = document.createElement('p');
-        errorMessage.textContent = 'Socket disconnected. Please refresh the page.';
+        errorMessage.textContent = errmsg;
+
+        // Create a close button
+        var closeButton = document.createElement('button');
+        closeButton.textContent = 'Close';
+        closeButton.addEventListener('click', function() {
+            // Remove the modal overlay when the close button is clicked
+            modalOverlay.remove();
+        });
+        modalContent.appendChild(closeButton);
 
         // Append the error message and close button to the modal content
         modalContent.appendChild(errorMessage);
