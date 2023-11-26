@@ -14,6 +14,7 @@ def updateOverviewData():
         task['description'] = task['description'].replace("\r", "").replace("\n","<br>")
         task['teamName'] = teams[task['teamID']] if task['teamID'] != None else "Kein Team Ausgewählt"
         status = getStatusOfTask(task['taskID'])
+        task['statusID'] = status['statusID']
         task['status'] = status['name']
         task['statusText'] = status['text']
         task['statustimestamp'] = formatDatetime(status['timestamp'])
@@ -22,12 +23,7 @@ def updateOverviewData():
         if key != -1:
             values[key] += 1
     
-    piechart = {'values': values, 'labels': statuses,
-        'type': 'pie',
-        'textinfo': "label+value",
-        'textposition': "inside",
-        'insidetextorientation': "radial",
-        'automargin': True}
+    piechart = {'values': values, 'labels': statuses}
     
     out = {"piechart": piechart,
            "tasks": tasks,

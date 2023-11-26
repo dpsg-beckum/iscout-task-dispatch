@@ -7,9 +7,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <div class="page-div">
-    <div style="margin:10px; background-color: green;">
-        <div style="width: fit-content;">
-            <div id="myPlot"></div>
+    <div style="margin:10px;">
+        <div class="row" style="width: 100%;">
+            <div class="col">
+                <div style="width: 0em;">
+                    <div id="myPlot"></div>
+                </div>
+            </div>
+            <div class="col" style="width: 100%;">
+                <div id="myTable" style="background-color: red;"></div>
+            </div>
         </div>
     </div>
 </div> 
@@ -19,8 +26,25 @@
     var site_data = null;
 
     // Function to draw the site chart
-    function drawSite() {
+    function drawPlot() {
         console.log("PLOTTING");
+        var data = {
+            type: 'pie',
+            textinfo: "label+value",
+            textposition: "inside",
+            insidetextorientation: "radial",
+            automargin: true,
+            marker: {
+                colors: [
+                    'rgb(0,0,255)',
+                    'rgb(0,128,0)',
+                    'rgb(255,165,0)',
+                    'rgb(128,0,128)',
+                    'rgb(255,0,0)',
+                ]
+            }
+        };
+
         var layout = {
             margin: {"t": 0, "b": 0, "l": 0, "r": 0},
             height: 300,
@@ -33,10 +57,108 @@
             responsive: true,
         };
 
-        console.log(site_data);
+        data.values = site_data["piechart"]["values"]
+        data.labels = site_data["piechart"]["labels"]
 
         // Use Plotly.react to update the chart with new data
-        Plotly.react('myPlot', [site_data["piechart"]], layout, config);
+        Plotly.react('myPlot', [data], layout, config);
+    }
+
+    function drawList(listID, sortCriteria) {
+        console.log("Drawing List");
+
+        // Get the div where the table will be displayed
+        var tableDiv = document.getElementById(listID);
+
+        // Clear the existing content in the tableDiv
+        tableDiv.innerHTML = '';
+
+        // Create a table element
+        var table = document.createElement('table');
+        table.setAttribute('class', 'task-table');
+
+        // Create the table header row
+        var thead = document.createElement('thead');
+        var headerRow = document.createElement('tr');
+        
+        var headers = ["Task ID", "Name", "Description", "Team", "Status"];
+
+        // Iterate over each header and create a th element for it
+        for (var i = 0; i < headers.length; i++) {
+            var th = document.createElement('th');
+            th.textContent = headers[i];
+            th.setAttribute('style', i === 2 ? 'width: 25%;' : 'width: 10%;'); // Adjust width for the 'Description' column
+            headerRow.appendChild(th);
+        }
+
+        // Append the header row to the thead
+        
+
+        // Append the thead to the table
+        
+
+        // Create the table body
+        var tbody = document.createElement('tbody');
+
+        var numele = 0;
+
+        // Iterate over each task in the sitedata['tasks'] array
+        for (var i = 0; i < site_data['tasks'].length; i++) {
+            var task = site_data['tasks'][i];
+
+            // Create a table row for each task
+            var tr = document.createElement('tr');
+            tr.style.color = 'white'
+
+            // Create table data cells for each property of the task
+            var tdTaskID = document.createElement('td');
+            tdTaskID.textContent = task['taskID'];
+
+            var tdName = document.createElement('td');
+            tdName.textContent = task['name'];
+
+            var tdDescription = document.createElement('td');
+            tdDescription.textContent = task['description'];
+
+            var tdTeam = document.createElement('td');
+            tdTeam.textContent = task['teamName'];
+
+            var tdStatus = document.createElement('td');
+            tdStatus.textContent = task['status'];
+
+            // Append the table data cells to the table row
+            tr.appendChild(tdTaskID);
+            tr.appendChild(tdName);
+            tr.appendChild(tdDescription);
+            tr.appendChild(tdTeam);
+            tr.appendChild(tdStatus);
+
+            // Append the table row to the tbody
+            if(sortCriteria(task['statusID']))
+            {
+                numele++;
+                tbody.appendChild(tr);
+            }
+        }
+
+        if(numele == 0) {
+            return
+        }
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+        // Append the tbody to the table
+        table.appendChild(tbody);
+
+        // Append the table to the tableDiv
+        tableDiv.appendChild(table);
+    }
+
+
+    function drawSite() {
+        drawPlot()
+        console.log(site_data['tasks'])
+        drawList("myTable", function(id) {return (id == 1)})
+        drawList("myTable", function(id) {return (id == 5)})
     }
 
     // Event listener for receiving new data
@@ -47,6 +169,35 @@
         // Update the chart when new data is received
         drawSite();
     });
+
+    socket.on('disconnect', function() {
+        displaySocketError();
+
+    });
+
+    function displaySocketError() {
+        // Create a modal overlay
+        var modalOverlay = document.createElement('div');
+        modalOverlay.setAttribute('class', 'modal-overlay');
+
+        // Create the modal content
+        var modalContent = document.createElement('div');
+        modalContent.setAttribute('class', 'modal-content');
+
+        // Create an error message
+        var errorMessage = document.createElement('p');
+        errorMessage.textContent = 'Socket disconnected. Please refresh the page.';
+
+        // Append the error message and close button to the modal content
+        modalContent.appendChild(errorMessage);
+
+        // Append the modal content to the modal overlay
+        modalOverlay.appendChild(modalContent);
+
+        // Append the modal overlay to the body
+        document.body.appendChild(modalOverlay);
+    }
+
 
     // Request initial data when the page loads
     socket.emit('get_overview_data');
