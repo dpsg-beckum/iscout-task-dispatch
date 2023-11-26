@@ -1,1 +1,1 @@
-docker run -p 5000:5000 iscouttaskdispatch
+docker run --name iscout -p 5000:5000 iscouttaskdispatch
