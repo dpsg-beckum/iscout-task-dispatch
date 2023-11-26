@@ -5,5 +5,4 @@ Flask-SQLAlchemy
 SQLAlchemy-Utils
 flask_restful
 flask_cors
-
-
+Flask-SocketIO==5.1.1

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Overview{% endblock %}
+
+{% block content %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<div class="page-div">
+    <div style="margin:10px; background-color: green;">
+        <div style="width: fit-content;">
+            <div id="myPlot"></div>
+        </div>
+    </div>
+</div> 
+
+<script>
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    var site_data = null;
+
+    // Function to draw the site chart
+    function drawSite() {
+        console.log("PLOTTING");
+        var layout = {
+            margin: {"t": 0, "b": 0, "l": 0, "r": 0},
+            height: 300,
+            width: 300,
+            showlegend: false
+        };
+
+        var config = {
+            staticPlot: true,
+            responsive: true,
+        };
+
+        console.log(site_data);
+
+        // Use Plotly.react to update the chart with new data
+        Plotly.react('myPlot', [site_data["piechart"]], layout, config);
+    }
+
+    // Event listener for receiving new data
+    socket.on('overview_data', function(data) {
+        console.log("Received Data");
+        site_data = data;
+
+        // Update the chart when new data is received
+        drawSite();
+    });
+
+    // Request initial data when the page loads
+    socket.emit('get_overview_data');
+</script>
+
+{% endblock %}
+

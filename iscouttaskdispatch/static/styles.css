@@ -169,3 +169,14 @@ input[type="submit"] {
 .page-div {
     margin: 1%;
 }
+
+
+.error-message {
+    background-color: #f8d7da; /* Light red background */
+    color: #721c24; /* Dark red text color */
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #f5c6cb; /* Dark red border */
+    border-radius: 5px;
+    margin: 1%;
+}

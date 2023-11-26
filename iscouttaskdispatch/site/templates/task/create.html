@@ -17,18 +17,7 @@
             <br>
             <input type="submit" value="Create Task">
         </form>
-        
-        {% if error_message %}
-            <div class="error-message">
-                {{ error_message }}
-            </div>
-        {% endif %}
         <br>
         <a href="{{ url_for('site.tasks_site.showAllTasks') }}">Back to Task List</a>
     </div>
-    {% if error_message %}
-    <div class="error-message">
-        {{ error_message }}
-    </div>
-    {% endif %}
 {% endblock %}

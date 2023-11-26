@@ -3,11 +3,16 @@ from flask import render_template, request, redirect, url_for
 from ...database.handel import *
 from .tools import formatDatetime
 from flask import Blueprint
+from ...sockets.socket_setup import socketio
+import time
+from datetime import datetime
 
 tasks_site = Blueprint("tasks_site", __name__, template_folder="../templates/task", url_prefix="/tasks")
 
 @tasks_site.route("/")
 def showAllTasks():
+    current_time = datetime.now().strftime('%H:%M:%S')
+    socketio.emit('update_time', {'time': current_time})
     teams = {i['teamID']:i['name'] for i in getAllTeams()}
     tasks = getAllTasks()
     for task in tasks:
@@ -56,6 +61,8 @@ def createTaskSite():
             return redirect(url_for("site.tasks_site.showAllTasks"))
         except ElementAlreadyExists:
             error_message = "Task with the provided ID already exists."
+        except Exception as ex:
+            error_message = str(ex)
 
     return render_template("task/create.html", error_message=error_message, form_data=form_data)
 

@@ -26,6 +26,8 @@ def createTeamSite():
             return redirect(url_for("site.teams_site.showAllTeams"))
         except ElementAlreadyExists:
             error_message = "Team with the provided ID already exists."
+        except Exception as ex:
+            error_message = str(ex)
 
     return render_template("team/create.html", error_message=error_message, form_data=form_data)
 
