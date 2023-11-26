@@ -1,9 +1,7 @@
 from flask import Flask
-from flask_socketio import SocketIO
 from pathlib import Path
 from .site import site
 from .api import api
-from .sockets.socket_setup import init_socketio
 
 print("Hello from Init Script")
 
@@ -11,7 +9,6 @@ def create_app():
 
 
     app = Flask(__name__)
-    init_socketio(app)
 
     from iscouttaskdispatch.database import db
 

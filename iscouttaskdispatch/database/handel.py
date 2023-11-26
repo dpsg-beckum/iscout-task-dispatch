@@ -5,10 +5,6 @@ from datetime import datetime as dt
 from .exceptions import *
 from pprint import pprint
 from sqlalchemy import desc
-from ..sockets.sockethelper import updateOverviewData
-
-def changes():
-    updateOverviewData()
 
 def getAllTaskHasStatus():
     return [DatabaseEncoder.default(i) for i in TaskHasStatus.query.all()]
@@ -17,13 +13,11 @@ def setTaskName(taskID: int, name: str):
     task : Task = Task.query.get(taskID)
     task.name = name
     db.session.commit()
-    changes()
 
 def setTaskDescription(taskID: int, description: str):
     task : Task = Task.query.get(taskID)
     task.description = description
     db.session.commit()
-    changes()
 
 def getAllTasks():
     return [DatabaseEncoder.default(i) for i in Task.query.all()]
@@ -38,7 +32,6 @@ def createTask(taskID:int, name:str, description: str, how:str = ""):
         db.session.add(Task(taskID = taskID, name=name, description=description))
         db.session.commit()
         setTaskStatus(taskID,1, how)
-        changes()
         return DatabaseEncoder.default(Task.query.get(taskID))
     else:
         raise ElementAlreadyExists()
@@ -47,7 +40,6 @@ def deleteTask(taskID: int):
     if Task.query.get(taskID):
         db.session.delete(db.session.query(Task).get(taskID))
         db.session.commit()
-        changes()
     else:
         raise ElementDoesNotExsist()
 
@@ -64,7 +56,6 @@ def createTeam(teamID:int, name: str):
             raise Exception("Negativ ID")
         db.session.add(Team(teamID = int(teamID), name=name))
         db.session.commit()
-        changes()
         return DatabaseEncoder.default(Team.query.get(teamID))
     else:
         raise ElementAlreadyExists()
@@ -74,28 +65,24 @@ def deleteTeam(teamID:int):
             x = db.session.query(Team).get(teamID)
             db.session.delete(x)
             db.session.commit()
-            changes()
     else:
         raise ElementDoesNotExsist()
 
 def setTaskStatus(taskID: int, statusID: int, text :str = ""):
     db.session.add(TaskHasStatus(taskID=taskID, statusID=statusID, text=text, timestamp=dt.now()))
     db.session.commit()
-    changes()
     pass
 
 def setTeamName(teamID: int, name: str):
     team : Team = Team.query.get(teamID)
     team.name = name
     db.session.commit()
-    changes()
 
 def assignTask(taskID: int, teamID: int, msg :str = ""):
     #print(f"assigning {taskID} {type(taskID)} to {teamID} {type(teamID)}")
     task : Task = Task.query.get(taskID)
     task.teamID = teamID
     db.session.commit()
-    changes()
     if teamID == None:
         pass
     else:
