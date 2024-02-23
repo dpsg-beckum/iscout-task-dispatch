@@ -1,4 +1,4 @@
 # views/__init__.py
-from .task_views import tasks_site
-from .team_views import teams_site
+from .spielleitung import spielleitung_site
+from .player import player_site
 from .overview import overview_site

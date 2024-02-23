@@ -1,6 +1,6 @@
 # site/views/team_views.py
 from flask import render_template, request, redirect, url_for, abort
-from ...database.handel import *
+from ....database.handel import *
 from flask import Blueprint
 
 teams_site = Blueprint("teams_site", __name__, template_folder="../templates/team", url_prefix="/teams")

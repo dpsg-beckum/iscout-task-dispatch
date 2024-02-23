@@ -131,3 +131,42 @@ def getAllStatusesOfTask(taskID: int):
 
 def getAllStatuses():
     return {s.statusID:s.name for s in Status.query.all()}
+
+def get_tasks_with_latest_status_by_team(teamID):
+    # Join Task, TaskHasStatus, and Status tables. Filter by teamID.
+    # Order by taskID and timestamp to ensure we get the latest status for each task.
+    tasks_with_status = db.session.query(
+        Task.taskID,
+        Task.name.label('task_name'),
+        Task.description,
+        Status.name.label('status_name'),
+        Status.statusID,
+        TaskHasStatus.timestamp
+    ).join(
+        TaskHasStatus, Task.taskID == TaskHasStatus.taskID
+    ).join(
+        Status, TaskHasStatus.statusID == Status.statusID
+    ).filter(
+        Task.teamID == teamID
+    ).order_by(
+        Task.taskID, TaskHasStatus.timestamp.desc()
+    ).all()
+
+    # To ensure we get the latest status per task, we'll process the result
+    # and keep only the first occurrence of each task since they're ordered by the latest timestamp.
+    latest_status_per_task = []
+    processed_tasks = set()  # Set to keep track of tasks that have been processed
+
+    for task in tasks_with_status:
+        if task.taskID not in processed_tasks:
+            latest_status_per_task.append({
+                'taskID': task.taskID,
+                'name': task.task_name,
+                'description': task.description,
+                'status': task.status_name,
+                'statusID': task.statusID,
+                'last_updated': task.timestamp
+            })
+            processed_tasks.add(task.taskID)  # Mark this task as processed
+
+    return latest_status_per_task

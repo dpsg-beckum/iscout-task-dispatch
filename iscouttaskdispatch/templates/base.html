@@ -11,10 +11,7 @@
 <body>
     <div class="navbar">
         <a href="{{ url_for('site.index') }}">Home</a>
-        <a href="{{ url_for('site.tasks_site.showAllTasks') }}">Tasks</a>
-        <a href="{{ url_for('site.teams_site.showAllTeams') }}">Teams</a>
-        <a href="{{ url_for('site.overview_site.showOverview') }}">Overview</a>
-        <!-- Add more navigation links as needed -->
+        
     </div>
     <div class="content">
         {% if error_message %}

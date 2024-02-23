@@ -1,7 +1,7 @@
 # site/views/overview.py
 from flask import render_template, request, redirect, url_for
-from ...database.handel import *
-from .tools import formatDatetime
+from ....database.handel import *
+from ..tools import formatDatetime
 from flask import Blueprint
 from pprint import pprint
 import time

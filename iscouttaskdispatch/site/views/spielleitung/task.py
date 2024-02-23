@@ -1,12 +1,12 @@
 # site/views/task_views.py
 from flask import render_template, request, redirect, url_for
-from ...database.handel import *
-from .tools import formatDatetime
+from ....database.handel import *
+from ..tools import formatDatetime
 from flask import Blueprint
 import time
 from datetime import datetime
 
-tasks_site = Blueprint("tasks_site", __name__, template_folder="../templates/task", url_prefix="/tasks")
+tasks_site = Blueprint("tasks_site", __name__, template_folder="tasks", url_prefix="/tasks")
 
 @tasks_site.route("/")
 def showAllTasks():
@@ -20,7 +20,7 @@ def showAllTasks():
         task['status'] = status['name']
         task['statusText'] = status['text']
         task['statustimestamp'] = formatDatetime(status['timestamp'])
-    return render_template("task/index.html", tasks=tasks, teams=getAllTeams())
+    return render_template("index.html", tasks=tasks, teams=getAllTeams())
 
 
 @tasks_site.route("/<int:taskID>/edit")
@@ -41,7 +41,7 @@ def updateTask(taskID):
         setTaskName(taskID, name)
         setTaskDescription(taskID, description)
         setTaskStatus(taskID, status, "set Status via UI")
-    return redirect(url_for("site.tasks_site.showAllTasks"))
+    return redirect(url_for(".showAllTasks"))
 
 
 @tasks_site.route("/create", methods=["GET", "POST"])
@@ -56,7 +56,7 @@ def createTaskSite():
 
         try:
             createTask(form_data["taskID"], form_data["name"], form_data["description"], "Created via UI")
-            return redirect(url_for("site.tasks_site.showAllTasks"))
+            return redirect(url_for(".showAllTasks"))
         except ElementAlreadyExists:
             error_message = "Task with the provided ID already exists."
         except Exception as ex:
@@ -71,7 +71,7 @@ def deleteTaskSite(taskID):
     if request.method == "POST":
         try:
             deleteTask(taskID)
-            return redirect(url_for("site.tasks_site.showAllTasks"))
+            return redirect(url_for(".showAllTasks"))
         except ElementDoesNotExsist:
             error_message = "Task with the provided ID does not exists."
             # You can handle the error as needed, such as displaying a message to the user.
@@ -83,7 +83,7 @@ def deleteTaskSite(taskID):
 def assignTaskSite(taskID):
     teamID = request.form.get("team", type=int)
     assignTask(taskID, teamID, "Assigned via WEB UI")
-    return redirect(url_for("site.tasks_site.showAllTasks"))
+    return redirect(url_for(".showAllTasks"))
 
 
 @tasks_site.route("/<taskID>")
