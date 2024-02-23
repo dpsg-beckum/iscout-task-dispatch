@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,18 +9,21 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
 </head>
+
 <body>
+    {% if error_message %}
+    <div class="error-container">
+        <span>{{ error_message }}</span>
+        <span class="error-close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+    </div>
+    {% endif %}
     <div class="navbar">
         <a href="{{ url_for('site.index') }}">Home</a>
-        
+        {% block navbar %}{% endblock %}
     </div>
     <div class="content">
-        {% if error_message %}
-            <div class="error-message">
-                {{ error_message }}
-            </div>
-        {% endif %}
         {% block content %}{% endblock %}
     </div>
 </body>
+
 </html>

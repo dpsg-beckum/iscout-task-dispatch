@@ -4,7 +4,7 @@ from .views import spielleitung
 from .views import overview
 from .views import player
 
-site = Blueprint("site", __name__, template_folder="templates/")
+site = Blueprint("site", __name__, template_folder="templates")
 
 
 site.register_blueprint(spielleitung.spielleitung_site)

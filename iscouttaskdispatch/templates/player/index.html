@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Player index{% endblock %}
+
+{% block navbar %}
+{{ super() }}
+<a href="{{ url_for('site.player_site.index') }}">Teams</a>
+{% endblock %}
+
+{% block content %}
+{% for team in teams %}
+<h2><a href="{{ url_for('site.player_site.overview', teamID=team.teamID) }}" class="button">{{team.name}}</a></h2>
+{% endfor %}
+{% endblock %}

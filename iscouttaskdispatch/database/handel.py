@@ -5,6 +5,7 @@ from datetime import datetime as dt
 from .exceptions import *
 from pprint import pprint
 from sqlalchemy import desc
+from ..site.views.tools import convert_text_to_links
 
 def getAllTaskHasStatus():
     return [DatabaseEncoder.default(i) for i in TaskHasStatus.query.all()]
@@ -84,7 +85,7 @@ def assignTask(taskID: int, teamID: int, msg :str = ""):
     task.teamID = teamID
     db.session.commit()
     if teamID == None:
-        pass
+        setTaskStatus(taskID, 1, "Retracted Team")
     else:
         setTaskStatus(taskID, 2, msg)
 
@@ -162,11 +163,11 @@ def get_tasks_with_latest_status_by_team(teamID):
             latest_status_per_task.append({
                 'taskID': task.taskID,
                 'name': task.task_name,
-                'description': task.description,
+                'description': convert_text_to_links(str(task.description)),
                 'status': task.status_name,
                 'statusID': task.statusID,
                 'last_updated': task.timestamp
             })
             processed_tasks.add(task.taskID)  # Mark this task as processed
 
-    return latest_status_per_task
+    return sorted(latest_status_per_task, key=lambda x: x['last_updated'], reverse=True)

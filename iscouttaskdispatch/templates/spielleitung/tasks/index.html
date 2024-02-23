@@ -1,11 +1,14 @@
-{% extends 'base.html' %}
+{% extends 'spielleitung/index.html' %}
 
 {% block title %}Task List{% endblock %}
 
+{% block navbar %}
+{{ super() }}
+<a href="{{ url_for('site.spielleitung_site.tasks_site.index') }}">Tasks</a>
+<a href="{{ url_for('.createTaskSite') }}">Create New</a>
+{% endblock %}
+
 {% block content %}
-<div class="navbar">
-    <a href="{{ url_for('site.tasks_site.createTaskSite') }}">Create New</a>
-</div>
 <div class="page-div">
     <h1>Tasks</h1>
     <table style="width: 100%;">
@@ -22,7 +25,7 @@
         <tbody>
             {% for task in tasks %}
                 <tr>
-                    <td><a class="tasklink" href="{{ url_for('site.tasks_site.specificTask', taskID=task.taskID) }}">{{ task.taskID }}</a></td>
+                    <td><a class="tasklink" href="{{ url_for('.specificTask', taskID=task.taskID) }}">{{ task.taskID }}</a></td>
                     <td>{{ task.name }}</td>
                     <td>
                         {% autoescape false %}
@@ -52,10 +55,10 @@
                     </td>
                     <td>
                         <div>
-                            <a href="{{ url_for('site.tasks_site.editTask', taskID=task.taskID) }}">Edit</a>
+                            <a href="{{ url_for('.editTask', taskID=task.taskID) }}">Edit</a>
                         </div>
                         <div>
-                            <form class="form-inline" method="POST" action="{{ url_for('site.tasks_site.assignTaskSite', taskID=task.taskID) }}">
+                            <form class="form-inline" method="POST" action="{{ url_for('.assignTaskSite', taskID=task.taskID) }}">
                                 <label for="team">Assign to Team:</label>
                                 <select name="team" id="team">
                                     <option {% if task.teamID is none %}selected{% endif %}>None</option>

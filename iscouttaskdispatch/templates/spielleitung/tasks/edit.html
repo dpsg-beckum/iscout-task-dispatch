@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'spielleitung/tasks/index.html' %}
 
 {% block title %}Edit Task{% endblock %}
 
@@ -6,7 +6,7 @@
 <div class="page-div">
     <h1>Edit Task {{ task.taskID }}</h1>
     <div>
-        <form action="{{ url_for('site.tasks_site.updateTask', taskID=task.taskID) }}" method="post">
+        <form action="{{ url_for('.updateTask', taskID=task.taskID) }}" method="post">
             <label for="name">Task Name:</label>
             <input type="text" id="name" name="name" value="{{ task.name }}">
             <br>
@@ -39,7 +39,7 @@
     <div class="page-div">
         <details>
             <summary>Danger Zone</summary>
-            <form action="{{ url_for('site.tasks_site.deleteTaskSite', taskID=task.taskID) }}" method="post">
+            <form action="{{ url_for('.deleteTaskSite', taskID=task.taskID) }}" method="post">
                 <input style="background-color: red;" type="submit" value="Delete Task">
             </form>
         </details>

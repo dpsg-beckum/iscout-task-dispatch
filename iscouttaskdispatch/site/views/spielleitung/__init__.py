@@ -7,15 +7,14 @@ from flask import Blueprint
 import time
 from datetime import datetime
 
-spielleitung_site = Blueprint("spielleitung_site",
-                              __name__,
-                              template_folder="templates/spielleitung/",
-                              url_prefix="/spielleitung")
+spielleitung_site = Blueprint(
+    "spielleitung_site", __name__, url_prefix="/spielleitung")
 
 
 spielleitung_site.register_blueprint(tasks_site)
 spielleitung_site.register_blueprint(teams_site)
 
+
 @spielleitung_site.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("spielleitung/index.html")

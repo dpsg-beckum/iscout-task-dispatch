@@ -1,9 +1,38 @@
-/* static/styles.css */
+:root {
+    --text-dark: #333;
+    --text-light: #fff;
+    --text-muted: #888;
+    --text-hyperlink: #54c9c9;
+
+    --failed-color: red;
+    --done-color: purple;
+    --wip-color: orange;
+    --assigned-color: green;
+    --created-color: blue;
+
+    --failed-color-background: rgba(255, 0, 0, 0.7);
+    --done-color-background: rgba(128, 0, 128, 0.7);
+    --wip-color-background: rgba(255, 165, 0, 0.7);
+    --assigned-color-background: rgba(0, 128, 0, 0.7);
+    --created-color-background: rgba(0, 0, 255, 0.7);
+
+    --background-color-1: #f0f0f0;
+    --background-color-2: #bebebe;
+    --background-color-3: rgba(255, 255, 255, 0.3);
+    --accent-colour-1: #a3cbcb;
+    --accent-colour-2: #669e9f7d;
+    --accent-colour-3: #5fd1d391;
+    --accent-colour-4: #54c9c975;
+    --error-color: #ffc4c4;
+    --tag-colour: var(--accent-colour-2);
+
+    --border: 3px solid #333;
+}
 
 body {
     font-family: 'Arial', sans-serif;
     background-color: #f4f4f4;
-    
+
     margin: 0;
     padding: 0;
 }
@@ -23,7 +52,8 @@ table {
     margin-top: 20px;
 }
 
-th, td {
+th,
+td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
@@ -43,7 +73,8 @@ label {
     margin-bottom: 5px;
 }
 
-input, textarea {
+input,
+textarea {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
@@ -64,7 +95,7 @@ input[type="submit"] {
     z-index: 1;
     padding: 2em;
     margin: -2em;
-  }
+}
 
 .tasklink a:hover {
     background-color: #4caf50;
@@ -120,17 +151,22 @@ input[type="submit"] {
 }
 
 .status-created {
-    color: blue; /* Change the color based on your preference */
+    color: blue;
+    /* Change the color based on your preference */
 }
+
 .status-assigned {
     color: green;
 }
+
 .status-work-in-progress {
     color: orange;
 }
+
 .status-done {
     color: purple;
 }
+
 .status-failed {
     color: red;
 }
@@ -141,42 +177,47 @@ input[type="submit"] {
 }
 
 .row {
-    display: flex; /* equal height of the children */
+    display: flex;
+    /* equal height of the children */
 }
-  
+
 .col {
-    flex: 1; /* additionally, equal width */
+    flex: 1;
+    /* additionally, equal width */
 
     padding: 1em;
 }
 
-.form-inline {  
+.form-inline {
     display: flex;
     flex-flow: row wrap;
     align-items: center;
-  }
-  
-  .form-inline label {
+}
+
+.form-inline label {
     margin: 5px 10px 5px 0;
-  }
-  
-  .form-inline input {
+}
+
+.form-inline input {
     vertical-align: middle;
     margin: 1% 1% 1% 1%;
 
-  }
-  
+}
+
 .page-div {
     margin: 1%;
 }
 
 
 .error-message {
-    background-color: #f8d7da; /* Light red background */
-    color: #721c24; /* Dark red text color */
+    background-color: #f8d7da;
+    /* Light red background */
+    color: #721c24;
+    /* Dark red text color */
     padding: 10px;
     margin-bottom: 15px;
-    border: 1px solid #f5c6cb; /* Dark red border */
+    border: 1px solid #f5c6cb;
+    /* Dark red border */
     border-radius: 5px;
     margin: 1%;
 }
@@ -199,4 +240,37 @@ input[type="submit"] {
     padding: 20px;
     border-radius: 5px;
     text-align: center;
+}
+
+/*
+    ############################# NEW CSS ############################
+*/
+
+/* Floating error message container */
+.error-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: var(--error-color);
+    color: var(--text-dark);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    /* Ensure it's above other content */
+}
+
+/* Close button for the error message */
+.error-close-btn {
+    float: right;
+    font-size: 20px;
+    line-height: 20px;
+    cursor: pointer;
+    margin-left: 15px;
+    color: var(--text-light);
+}
+
+/* Hover effect for close button */
+.error-close-btn:hover {
+    color: var(--text-muted);
 }

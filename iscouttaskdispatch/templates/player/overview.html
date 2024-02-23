@@ -1,0 +1,43 @@
+{% extends 'player/index.html' %}
+
+{% block title %}{{ team.teamID }} {{ team.name }}{% endblock %}
+
+{% block navbar %}
+{{ super() }}
+<a href="{{ url_for('site.player_site.leader', teamID=team.teamID ) }}">Captain</a>
+{% endblock %}
+
+{% block content %}
+
+<h1>
+    Team: {{ team.teamID }} {{ team.name }}
+</h1>
+
+
+
+{% if tasks %}
+
+{% for task in tasks %}
+
+<h3>{{ task.taskID }}. {{ task.name }}</h3>
+
+<p>
+{% autoescape false %}
+{{ task.description }}
+{% endautoescape %}
+</p>
+<p>
+{{ task.last_updated }}
+</p>
+<br>
+
+{% endfor %}
+
+{% else %}
+
+<h2>Aktuell keine Aufgabe</h2>
+
+{% endif %}
+
+
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends 'player/index.html' %}
+
+{% block title %}{{ team.teamID }} {{ team.name }}{% endblock %}
+
+{% block navbar %}
+{{ super() }}
+<a href="{{ url_for('site.player_site.overview', teamID=team.teamID ) }}">Übersicht</a>
+{% endblock %}
+
+{% block content %}
+
+<h1>
+    Team: {{ team.teamID }} {{ team.name }}
+</h1>
+
+{% if failed_tasks %}
+
+<h2 style="background-color: var(--failed-color);">
+    Fehlgeschlagende Aufgaben
+</h2>
+
+<table style="background-color: var(--failed-color-background);">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Aktualisiert um</th>
+    </tr>
+    {% for task in failed_tasks %}
+    <tr>
+        <td>{{ task.taskID }}</td>
+        <td>{{ task.name }}</td>
+        <td>{{ task.description }}</td>
+        <td>{{ task.last_updated }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endif %}
+
+<h2 style="color: var(--wip-color);">
+    In Arbeit:
+</h2>
+
+<table style="background-color: var(--wip-color-background);">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Aktualisiert um</th>
+    </tr>
+    {% for task in wip_task %}
+    <tr>
+        <td>{{ task.taskID }}</td>
+        <td>{{ task.name }}</td>
+        <td>{{ task.description }}</td>
+        <td>{{ task.last_updated }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+<h2 style="color: var(--assigned-color);">
+    Für dich Verfügbar:
+</h2>
+
+<table style="background-color: var(--assigned-color-background);">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Aktualisiert um</th>
+    </tr>
+    {% for task in assigned_task %}
+    <tr>
+        <td>{{ task.taskID }}</td>
+        <td>{{ task.name }}</td>
+        <td>{{ task.description }}</td>
+        <td>{{ task.last_updated }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2 style="color: var(--created-color);">
+    Verfügbare Aufgaben:
+</h2>
+
+<table style="background-color: var(--created-color-background);">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Aktualisiert um</th>
+    </tr>
+    {% for task in available_tasks %}
+    <tr>
+        <td>{{ task.taskID }}</td>
+        <td>{{ task.name }}</td>
+        <td>{{ task.description }}</td>
+        <td>{{ task.last_updated }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

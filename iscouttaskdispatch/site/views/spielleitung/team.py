@@ -8,9 +8,9 @@ teams_site = Blueprint("teams_site", __name__, template_folder="../templates/tea
 # ... (your existing team-related routes go here)
 
 @teams_site.route("/")
-def showAllTeams():
+def index():
     teams = getAllTeams()
-    return render_template("team/index.html", teams=teams)
+    return render_template("spielleitung/teams/index.html", teams=teams)
 
 @teams_site.route("/create", methods=["GET", "POST"])
 def createTeamSite():
@@ -23,13 +23,13 @@ def createTeamSite():
 
         try:
             createTeam(form_data["teamID"], form_data["name"])
-            return redirect(url_for("site.teams_site.showAllTeams"))
+            return redirect(url_for(".index"))
         except ElementAlreadyExists:
             error_message = "Team with the provided ID already exists."
         except Exception as ex:
             error_message = str(ex)
 
-    return render_template("team/create.html", error_message=error_message, form_data=form_data)
+    return render_template("spielleitung/teams/create.html", error_message=error_message, form_data=form_data)
 
 @teams_site.route("/<int:teamID>/delete", methods=["POST"])
 def deleteTeamSite(teamID):
@@ -37,7 +37,7 @@ def deleteTeamSite(teamID):
     if request.method == "POST":
         try:
             deleteTeam(teamID)
-            return redirect(url_for("site.teams_site.showAllTeams"))
+            return redirect(url_for(".index"))
         except ElementDoesNotExsist:
             error_message = "Team with the provided ID does not exists."
             # You can handle the error as needed, such as displaying a message to the user.
@@ -47,14 +47,14 @@ def deleteTeamSite(teamID):
 
 @teams_site.route("/<int:teamID>")
 def showTeam(teamID):
-    return render_template("team/team.html", team=getTeamViaID(teamID))
+    return render_template("spielleitung/teams/team.html", team=getTeamViaID(teamID))
 
 
 @teams_site.route("/<int:teamID>/edit")
 def editTeam(teamID):
     team = getTeamViaID(teamID)
     if team:
-        return render_template("team/edit.html", team=team)
+        return render_template("spielleitung/teams/edit.html", team=team)
     else:
         return render_template("error.html", error_message="Task does not exist.")
 
@@ -66,4 +66,4 @@ def updateTeam(teamID):
     else:
         abort(400)
 
-    return redirect(url_for("site.teams_site.showAllTeams"))
+    return redirect(url_for(".index"))

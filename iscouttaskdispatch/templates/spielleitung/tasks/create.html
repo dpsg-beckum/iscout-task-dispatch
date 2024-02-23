@@ -1,11 +1,11 @@
-{% extends 'base.html' %}
+{% extends 'spielleitung/tasks/index.html' %}
 
 {% block title %}Create Task{% endblock %}
 
 {% block content %}
     <div class="container">
         <h1>Create Task</h1>
-        <form action="{{ url_for('site.tasks_site.createTaskSite') }}" method="post">
+        <form action="{{ url_for('.createTaskSite') }}" method="post">
             <label for="taskID">Task ID:</label>
             <input type="number" id="taskID" name="taskID" value="{{ form_data['taskID'] }}" required>
             <br>
@@ -18,6 +18,6 @@
             <input type="submit" value="Create Task">
         </form>
         <br>
-        <a href="{{ url_for('site.tasks_site.showAllTasks') }}">Back to Task List</a>
+        <a href="{{ url_for('.index') }}">Back to Task List</a>
     </div>
 {% endblock %}

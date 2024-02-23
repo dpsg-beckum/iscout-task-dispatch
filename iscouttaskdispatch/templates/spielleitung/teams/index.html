@@ -1,12 +1,15 @@
-{% extends 'base.html' %}
+{% extends 'spielleitung/index.html' %}
 
 {% block title %}Team List{% endblock %}
 
+{% block navbar %}
+{{ super() }}
+<a href="{{ url_for('site.spielleitung_site.teams_site.index') }}">Teams</a>
+<a href="{{ url_for('.createTeamSite') }}">Create New</a>
+{% endblock %}
+
 {% block content %}
 <div>
-    <div class="navbar">
-        <a href="{{ url_for('site.teams_site.createTeamSite') }}">Create New</a>
-    </div>
     <div class="page-div">
         <h1>Teams</h1>
         <table>
@@ -19,15 +22,15 @@
             </thead>
             <tbody>
                 {% for team in teams %}
-                    <tr>
-                        <td>{{ team.teamID }}</td>
-                        <td>{{ team.name }}</td>
-                        <td>
-                            <div>
-                                <a href="{{ url_for('site.teams_site.editTeam', teamID=team.teamID) }}">Edit</a>
-                            </div>
-                        </td>
-                    </tr>
+                <tr>
+                    <td>{{ team.teamID }}</td>
+                    <td>{{ team.name }}</td>
+                    <td>
+                        <div>
+                            <a href="{{ url_for('.editTeam', teamID=team.teamID) }}">Edit</a>
+                        </div>
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
