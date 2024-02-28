@@ -3,7 +3,7 @@ import re
 
 
 def formatDatetime(timestamp: dt) -> str:
-    return timestamp.strftime("%H:%M:%S") if timestamp.date() == dt.today().date() else timestamp.strftime("%d.%m.%Y, %H:%M:%S")
+    return timestamp.strftime("%H:%M:%S") if timestamp.date() == dt.today().date() else timestamp.strftime("%d.%m.%Y %H:%M:%S")
 
 
 def convert_text_to_links(text):

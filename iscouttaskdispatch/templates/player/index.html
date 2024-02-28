@@ -8,7 +8,9 @@
 {% endblock %}
 
 {% block content %}
-{% for team in teams %}
-<h2><a href="{{ url_for('site.player_site.overview', teamID=team.teamID) }}" class="button">{{team.name}}</a></h2>
-{% endfor %}
+<div class="container">
+    {% for team in teams %}
+    <h2><a href="{{ url_for('site.player_site.overview', teamID=team.teamID) }}" class="button">{{team.name}}</a></h2>
+    {% endfor %}
+</div>
 {% endblock %}

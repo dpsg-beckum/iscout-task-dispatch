@@ -1,6 +1,7 @@
 from flask import Flask
 from pathlib import Path
 from .site import site
+from .api import api
 
 print("Hello from Init Script")
 
@@ -23,6 +24,6 @@ def create_app():
     # Register Blueprints
     app.register_blueprint(site)
     # Register API Blueprint if you have one
-    # app.register_blueprint(api)
+    app.register_blueprint(api)
 
     return app

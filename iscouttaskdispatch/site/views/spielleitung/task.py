@@ -50,9 +50,9 @@ def createTaskSite():
     form_data = {"taskID": None, "name": "", "description": ""}
 
     if request.method == "POST":
-        form_data["taskID"] = int(request.form.get("taskID"))
-        form_data["name"] = request.form.get("name")
-        form_data["description"] = request.form.get("description")
+        form_data["taskID"] = int(str(request.form.get("taskID")))
+        form_data["name"] = request.form.get("name").strip()
+        form_data["description"] = request.form.get("description").strip()
 
         try:
             createTask(form_data["taskID"], form_data["name"], form_data["description"], "Created via UI")
@@ -82,7 +82,7 @@ def deleteTaskSite(taskID):
 @tasks_site.route("/<int:taskID>/assign", methods=["POST"])
 def assignTaskSite(taskID):
     teamID = request.form.get("team", type=int)
-    assignTask(taskID, teamID, "Assigned via WEB UI")
+    assignTask(taskID, teamID, "Assigned via WEB UI", override=True)
     return redirect(url_for(".index"))
 
 

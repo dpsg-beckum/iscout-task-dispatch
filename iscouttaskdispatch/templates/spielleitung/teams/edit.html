@@ -8,9 +8,9 @@
         <h1>Edit Team {{ team.teamID }}</h1>
         <form action="{{ url_for('.updateTeam', teamID=team.teamID) }}" method="post">
             <label for="name">Team Name:</label>
-            <input type="text" id="name" name="name" value="{{ team.name }}">
+            <input class="form-input" type="text" id="name" name="name" value="{{ team.name }}">
             <br>
-            <input type="submit" value="Update Team">
+            <input class="form-input form-submit" type="submit" value="Update Team">
         </form>
     </div>
     <div class="page-div">

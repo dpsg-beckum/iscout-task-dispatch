@@ -8,10 +8,10 @@
     <div>
         <form action="{{ url_for('.updateTask', taskID=task.taskID) }}" method="post">
             <label for="name">Task Name:</label>
-            <input type="text" id="name" name="name" value="{{ task.name }}">
+            <input class="form-input" type="text" id="name" name="name" value="{{ task.name }}">
             <br>
             <label for="description">Task Description:</label>
-            <textarea id="description" name="description">{{ task.description }}</textarea>
+            <textarea class="form-textarea" id="description" name="description">{{ task.description }}</textarea>
             <br>
             <div class="row" style="width: 50%;">
                 <div class="col" style="width: 50%; float: left;">
@@ -33,7 +33,7 @@
             </div>
             
             <br>
-            <input type="submit" value="Update Task">
+            <input class="form-input form-submit" type="submit" value="Update Task">
         </form>
     </div>
     <div class="page-div">

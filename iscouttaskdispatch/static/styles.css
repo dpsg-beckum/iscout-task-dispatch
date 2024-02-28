@@ -10,11 +10,11 @@
     --assigned-color: green;
     --created-color: blue;
 
-    --failed-color-background: rgba(255, 0, 0, 0.7);
-    --done-color-background: rgba(128, 0, 128, 0.7);
-    --wip-color-background: rgba(255, 165, 0, 0.7);
-    --assigned-color-background: rgba(0, 128, 0, 0.7);
-    --created-color-background: rgba(0, 0, 255, 0.7);
+    --failed-color-background: rgba(255, 0, 0, 0.4);
+    --done-color-background: rgba(128, 0, 128, 0.4);
+    --wip-color-background: rgba(255, 165, 0, 0.4);
+    --assigned-color-background: rgba(64, 128, 64, 0.4);
+    --created-color-background: rgba(128, 128, 255, 0.4);
 
     --background-color-1: #f0f0f0;
     --background-color-2: #bebebe;
@@ -31,6 +31,7 @@
 
 body {
     font-family: 'Arial', sans-serif;
+    font-size: 16;
     background-color: #f4f4f4;
 
     margin: 0;
@@ -47,7 +48,7 @@ h1 {
 }
 
 table {
-    width: 100%;
+    /* width: 100%; */
     border-collapse: collapse;
     margin-top: 20px;
 }
@@ -73,8 +74,8 @@ label {
     margin-bottom: 5px;
 }
 
-input,
-textarea {
+.form-input,
+.form-textarea {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
@@ -82,9 +83,8 @@ textarea {
     font-size: x-large;
 }
 
-input[type="submit"] {
+.form-submit {
     background-color: #4caf50;
-    margin-top: 10px;
     color: white;
     cursor: pointer;
 }
