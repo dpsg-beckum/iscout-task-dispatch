@@ -7,47 +7,50 @@
 <a href="{{ url_for('site.player_site.leader', teamID=team.teamID ) }}">Captain</a>
 {% endblock %}
 
-{% block content %}
+<div style="margin: 10px;">
+    {% block content %}
 
-<h1>
-    Team: {{ team.teamID }} {{ team.name }}
-</h1>
+    <h1>
+        Team: {{ team.teamID }} {{ team.name }}
+    </h1>
+    <div class="container">
+        {% if failed_tasks %}
+        <h2 style="color: var(--failed-color);"> Fehlgeschlagende Aufgabe </h2>
+        {% for task in failed_tasks %}
+        <div style="background-color: var(--failed-color-background);">
+            <h3>{{ task.taskID }}. {{ task.name }}</h3>
+            <p>
+                {% autoescape false %}
+                {{ task.description }}
+                {% endautoescape %}
+            </p>
+            <p>
+                {{ task.last_updated }}
+            </p>
+            <br>
+        </div>
+        {% endfor %}
+        {% endif %}
 
-{% if failed_tasks %}
-<h2 style="color: var(--failed-color);"> Fehlgeschlagende Aufgabe </h2>
-{% for task in failed_tasks %}
-<div style="background-color: var(--failed-color-background);">
-    <h3>{{ task.taskID }}. {{ task.name }}</h3>
-    <p>
-        {% autoescape false %}
-        {{ task.description }}
-        {% endautoescape %}
-    </p>
-    <p>
-        {{ task.last_updated }}
-    </p>
-    <br>
+        {% if wip_task %}
+        {% for task in wip_task %}
+        <h3>{{ task.taskID }}. {{ task.name }}</h3>
+        <p>
+            {% autoescape false %}
+            {{ task.description }}
+            {% endautoescape %}
+        </p>
+        <p>
+            {{ task.last_updated }}
+        </p>
+        <br>
+        {% endfor %}
+        {% else %}
+        <h2>Aktuell keine Aufgabe, Bitte weise dir selber welche zu!</h2>
+
+        <p>Bitte Fange an eine Zu bearbeiten</p>
+        {% endif %}
+    </div>
 </div>
-{% endfor %}
-{% endif %}
-
-{% if wip_task %}
-{% for task in wip_task %}
-<h3>{{ task.taskID }}. {{ task.name }}</h3>
-<p>
-    {% autoescape false %}
-    {{ task.description }}
-    {% endautoescape %}
-</p>
-<p>
-    {{ task.last_updated }}
-</p>
-<br>
-{% endfor %}
-{% else %}
-<h2>Aktuell keine Aufgabe, Bitte weise dir selber welche zu!</h2>
-
-<p>Bitte Fange an eine Zu bearbeiten</p>
-{% endif %}
 
 {% endblock %}

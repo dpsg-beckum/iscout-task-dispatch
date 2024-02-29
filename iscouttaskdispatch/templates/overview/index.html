@@ -2,27 +2,34 @@
 
 {% block title %}Overview{% endblock %}
 
+{% block navbar %}
+{{ super() }}
+<a href="{{ url_for('site.overview_site.index') }}">Übersicht</a>
+{% endblock %}
+
 {% block content %}
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <div class="page-div">
     <div style="margin:10px;">
-        <div class="row" style="width: 100%;">
-            <div class="col">
-                <div style="width: 0em;">
+        <div class="flex-container">
+            <div class="flex-item">
+                <div>
                     <div id="myPlot"></div>
                 </div>
             </div>
-            <div class="col" style="width: 100%;">
-                <div id="myTable" style="background-color: red;"></div>
+            <div class="flex-item">
+                <div id="WIP"></div>
+            </div>
+            <div class="flex-item">
+                <div id="ERR"></div>
             </div>
         </div>
     </div>
-</div> 
+</div>
 
 <script>
-    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    //var socket = io.connect('http://' + document.domain + ':' + location.port);
     var site_data = null;
 
     // Function to draw the site chart
@@ -46,7 +53,7 @@
         };
 
         var layout = {
-            margin: {"t": 0, "b": 0, "l": 0, "r": 0},
+            margin: { "t": 0, "b": 0, "l": 0, "r": 0 },
             height: 300,
             width: 300,
             showlegend: false
@@ -64,7 +71,7 @@
         Plotly.react('myPlot', [data], layout, config);
     }
 
-    function drawList(listID, sortCriteria) {
+    function drawList(listID, sortCriteria, bg) {
         console.log("Drawing List");
 
         // Get the div where the table will be displayed
@@ -80,7 +87,7 @@
         // Create the table header row
         var thead = document.createElement('thead');
         var headerRow = document.createElement('tr');
-        
+
         var headers = ["Task ID", "Name", "Description", "Team", "Status"];
 
         // Iterate over each header and create a th element for it
@@ -88,14 +95,15 @@
             var th = document.createElement('th');
             th.textContent = headers[i];
             th.setAttribute('style', i === 2 ? 'width: 25%;' : 'width: 10%;'); // Adjust width for the 'Description' column
+            th.style.backgroundColor = bg;
             headerRow.appendChild(th);
         }
 
         // Append the header row to the thead
-        
+
 
         // Append the thead to the table
-        
+
 
         // Create the table body
         var tbody = document.createElement('tbody');
@@ -108,7 +116,7 @@
 
             // Create a table row for each task
             var tr = document.createElement('tr');
-            tr.style.color = 'white'
+            //tr.style.color = 'black'
 
             // Create table data cells for each property of the task
             var tdTaskID = document.createElement('td');
@@ -118,7 +126,7 @@
             tdName.textContent = task['name'];
 
             var tdDescription = document.createElement('td');
-            tdDescription.textContent = task['description'];
+            tdDescription.textContent = String(task['description']).substring(0, 20);
 
             var tdTeam = document.createElement('td');
             tdTeam.textContent = task['teamName'];
@@ -134,14 +142,13 @@
             tr.appendChild(tdStatus);
 
             // Append the table row to the tbody
-            if(sortCriteria(task['statusID']))
-            {
+            if (sortCriteria(task['statusID'])) {
                 numele++;
                 tbody.appendChild(tr);
             }
         }
 
-        if(numele == 0) {
+        if (numele == 0) {
             return
         }
         thead.appendChild(headerRow);
@@ -155,28 +162,57 @@
 
 
     function drawSite() {
-        if(Object.keys(site_data.tasks).length === 0) {
+        if (Object.keys(site_data.tasks).length === 0) {
             displaySocketError('No Data');
         }
         drawPlot()
         console.log(site_data['tasks'])
-        drawList("myTable", function(id) {return (id == 1)})
-        drawList("myTable", function(id) {return (id == 5)})
+        drawList("WIP", function (id) { return (id == 3) }, "")
+        drawList("ERR", function (id) { return (id == 5) }, "red")
     }
 
+    async function fetchJsonData(url) {
+        try {
+            // Make a request to the specified URL
+            const response = await fetch(url);
+
+            // Check if the request was successful
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            // Parse the JSON response
+            const data = await response.json();
+
+            // Return the JSON data
+            return data;
+        } catch (error) {
+            displaySocketError(error);
+            console.error("Error fetching JSON data: ", error);
+        }
+    }
+
+    const url = "{{ url_for('site.overview_site.data') }}"; // Replace with your target URL
+    fetchJsonData(url).then(data => {
+        site_data = data;
+        console.log(data); // Do something with the data
+        drawSite();
+    });
+
+
     // Event listener for receiving new data
-    socket.on('overview_data', function(data) {
+    /*socket.on('overview_data', function(data) {
         console.log("Received Data");
         site_data = data;
 
         // Update the chart when new data is received
         drawSite();
-    });
+    });*/
 
-    socket.on('disconnect', function() {
+    /*socket.on('disconnect', function() {
         displaySocketError('Socket disconnected. Please refresh the page.');
 
-    });
+    });*/
 
     function displaySocketError(errmsg) {
         // Create a modal overlay
@@ -194,7 +230,7 @@
         // Create a close button
         var closeButton = document.createElement('button');
         closeButton.textContent = 'Close';
-        closeButton.addEventListener('click', function() {
+        closeButton.addEventListener('click', function () {
             // Remove the modal overlay when the close button is clicked
             modalOverlay.remove();
         });
@@ -212,8 +248,7 @@
 
 
     // Request initial data when the page loads
-    socket.emit('get_overview_data');
+    //socket.emit('get_overview_data');
 </script>
 
 {% endblock %}
-

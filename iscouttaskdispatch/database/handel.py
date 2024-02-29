@@ -5,7 +5,7 @@ from datetime import datetime as dt
 from .exceptions import *
 from pprint import pprint
 from sqlalchemy import desc
-from ..site.views.tools import convert_text_to_links, formatDatetime
+from ..tools import convert_text_to_links, formatDatetime
 
 
 def getAllTaskHasStatus():

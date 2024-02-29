@@ -39,8 +39,7 @@ body {
 }
 
 .container {
-    width: 80%;
-    margin: 0 auto;
+    margin: 10px;
 }
 
 h1 {
@@ -273,4 +272,20 @@ label {
 /* Hover effect for close button */
 .error-close-btn:hover {
     color: var(--text-muted);
+}
+
+
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    /* Allows items to wrap onto the next line if the container width is exceeded */
+    gap: 10px;
+    /* Optional: Adds space between the items */
+}
+
+.flex-item {
+    flex: 1;
+    /* Causes items to share available space */
+    min-width: 100px;
+    /* Minimum width of each item before wrapping */
 }
