@@ -11,9 +11,11 @@
 <div class="page-div">
     <div style="margin:10px;">
         <div>
+            <h2>Work In Progress</h2>
             <div>
                 <div id="WIP"></div>
             </div>
+            <h2>Submitted</h2>
             <div>
                 <div id="SUB"></div>
             </div>
@@ -25,7 +27,7 @@
     var site_data = null;
 
     function drawList(listID, status, bg) {
-        console.log("Drawing List");
+        console.debug("Drawing List");
 
         // Get the div where the table will be displayed
         var tableDiv = document.getElementById(listID);
@@ -59,6 +61,9 @@
         // Iterate over each task in the sitedata['tasks'] array
         for (var i = 0; i < site_data['tasks'].length; i++) {
             var task = site_data['tasks'][i];
+            if (status != task['statusID']) {
+                continue;
+            }
 
             // Create a table row for each task
             var tr = document.createElement('tr');
@@ -77,31 +82,20 @@
             var tdForm = document.createElement('td');
             var form = document.createElement('form');
             // Assuming you need to construct the URL dynamically based on taskID
-            if (task['statusID'] == 6) { form.action = "/api/" + task['taskID'] + "/setstatus/" + 4; }
-            if (task['statusID'] == 3) { form.action = "/api/" + task['taskID'] + "/setstatus/" + 6; }
+            if (task['statusID'] == 6) { form.action = "/api/task/" + task['taskID'] + "/setstatus/" + 4; }
+            else if (task['statusID'] == 3) { form.action = "/api/task/" + task['taskID'] + "/setstatus/" + 6; }
+            else {
+                console.error("Error StatusID:" + task['statusID'])
+                console.error(status, task['statusID'] == 6, task['statusID'] == 3)
+                console.error(task)
+            }
             form.method = "POST";
             var input = document.createElement('input');
             input.type = "submit";
             if (task['statusID'] == 6) { input.value = "Als Fertig Markieren"; }
             if (task['statusID'] == 3) { input.value = "Als Abgegeben Markieren"; }
 
-            // Add event listener to the form
-            form.addEventListener('submit', function (event) {
-                event.preventDefault(); // Prevent the default form submission
-                var formData = new FormData(form); // You might need to adjust this based on your form's inputs
-
-                fetch(form.action, {
-                    method: 'POST',
-                    body: formData
-                }).then(response => {
-                    if (response.ok) {
-                        console.log("Form submitted successfully");
-                    } else {
-                        console.error("Form submission failed");
-                    }
-                    getData();
-                }).catch(error => console.error('Error submitting form:', error));
-            });
+            attachFormSubmitListener(form);
 
 
             form.appendChild(input);
@@ -112,12 +106,7 @@
             tr.appendChild(tdName);
             tr.appendChild(tdTeam);
             tr.appendChild(tdForm);
-
-            // Append the table row to the tbody
-            if (status == task['statusID']) {
-                numele++;
-                tbody.appendChild(tr);
-            }
+            tbody.appendChild(tr);
         }
 
         thead.appendChild(headerRow);
@@ -126,12 +115,31 @@
         tableDiv.appendChild(table);
     }
 
+    function attachFormSubmitListener(formElement) {
+        formElement.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            var formData = new FormData(formElement); // Adjust based on your form's inputs
+
+            fetch(formElement.action, {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (response.ok) {
+                    console.log("Form submitted successfully");
+                } else {
+                    console.error("Form submission failed");
+                    alert("Form submission failed")
+                }
+                getData();
+            }).catch(error => console.error('Error submitting form:', error));
+        });
+    }
+
 
     function drawSite() {
         if (Object.keys(site_data.tasks).length === 0) {
             displaySocketError('No Data');
         }
-        console.log(site_data['tasks'])
         drawList("WIP", 3, "")
         drawList("SUB", 6, "")
     }
@@ -189,7 +197,7 @@
     function getData() {
         fetchJsonData(url).then(data => {
             site_data = data;
-            console.log(data); // Do something with the data
+            console.debug(data); // Do something with the data
             drawSite();
         });
     }

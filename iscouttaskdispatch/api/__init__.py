@@ -25,7 +25,7 @@ def createTaskApi():
         print(ex)
         abort(500, str(ex))
         
-@api.route("/<int:taskID>/setstatus/<int:statusID>", methods=["GET", "POST"])
+@api.route("/task/<int:taskID>/setstatus/<int:statusID>", methods=["GET", "POST"])
 def work(taskID, statusID):
     setTaskStatus(taskID,statusID,"API")
     return "OK"
