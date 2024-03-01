@@ -4,7 +4,7 @@ import multiprocessing
 bind = "0.0.0.0:8000"
 workers = multiprocessing.cpu_count() * 2 + 1
 
-accesslog = "acess.log"
+# accesslog = "acess.log"
 # Use gevent for async workers, if your app is I/O bound
 # worker_class = 'gevent'
 
