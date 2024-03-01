@@ -61,11 +61,11 @@ def getTeamViaID(teamID: int):
     return DatabaseEncoder.default(Team.query.get(teamID))
 
 
-def createTeam(teamID: int, name: str):
+def createTeam(teamID: int, name: str, desc: str):
     if not Team.query.get(int(teamID)):
         if int(teamID) < 0:
             raise Exception("Negativ ID")
-        db.session.add(Team(teamID=int(teamID), name=name))
+        db.session.add(Team(teamID=int(teamID), name=name, description=desc))
         db.session.commit()
         return DatabaseEncoder.default(Team.query.get(teamID))
     else:
@@ -88,9 +88,10 @@ def setTaskStatus(taskID: int, statusID: int, text: str = ""):
     pass
 
 
-def setTeamName(teamID: int, name: str):
+def updateTeam(teamID: int, name: str, desc: str):
     team: Team = Team.query.get(teamID)
     team.name = name
+    team.description = desc
     db.session.commit()
 
 
