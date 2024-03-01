@@ -7,7 +7,8 @@ initial_data = {
         Status(statusID = 2, name = "Assigned"),
         Status(statusID = 3, name = "Work in Progress"),
         Status(statusID = 4, name = "Done"),
-        Status(statusID = 5, name = "Failed")
+        Status(statusID = 5, name = "Failed"),
+        Status(statusID = 6, name = "Submitted"),
     ]
 }
 

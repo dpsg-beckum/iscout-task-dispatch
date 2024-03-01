@@ -33,11 +33,16 @@ def leader(teamID):
                            failed_tasks=[i for i in tasks if i['statusID'] == 5],
                            wip_task=[i for i in tasks if i['statusID'] == 3],
                            assigned_task=[i for i in tasks if i['statusID'] <= 2],
-                           available_tasks=get_tasks_with_latest_status_by_team(None))
+                           available_tasks=get_tasks_with_latest_status_by_team(None, True))
 
 @player_site.route("/work/<int:taskID>")
 def work(taskID):
     setTaskStatus(taskID,3,"Self-Work")
+    return redirect(request.referrer or ".index")
+
+@player_site.route("/submit/<int:taskID>")
+def submit(taskID):
+    setTaskStatus(taskID,6,"Self-Submit")
     return redirect(request.referrer or ".index")
 
 @player_site.route("/<int:teamID>/assign/<int:taskID>")

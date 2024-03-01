@@ -25,6 +25,9 @@
             {{ task.description }}
             {% endautoescape %}</p>
         <p>{{ task.last_updated }}</p>
+        <form action="{{ url_for('site.player_site.submit', taskID=task.taskID ) }}" method="get">
+            <input type="submit" value="Als Abgegeben Markieren">
+        </form>
     </div>
     {% endfor %}
 </div>
@@ -40,6 +43,9 @@
             {{ task.description }}
             {% endautoescape %}</p>
         <p>{{ task.last_updated }}</p>
+        <form action="{{ url_for('site.player_site.submit', taskID=task.taskID ) }}" method="get">
+            <input type="submit" value="Als Abgegeben Markieren">
+        </form>
     </div>
     {% endfor %}
 </div>

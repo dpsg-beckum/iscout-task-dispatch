@@ -17,6 +17,7 @@ class Team(db.Model):
     __tablename__ = 'Team'
     teamID = Column(Integer, primary_key=True, nullable=False, unique=True)
     name = Column(String(255))
+    description = Column(Text)
 
 class Task(db.Model):
     __tablename__ = 'Task'
@@ -34,18 +35,19 @@ class TaskHasStatus(db.Model):
     text = Column(Text)
     timestamp = Column(DateTime)
 
-def seed_status_table():
-    # Assuming that the Status table is empty
-    statuses = {
-        1: "Created",
-        2: "Assigned",
-        3: "Work in Progress",
-        4: "Done",
-        5: "Failed"
-    }
+# def seed_status_table():
+#     # Assuming that the Status table is empty
+#     statuses = {
+#         1: "Created",
+#         2: "Assigned",
+#         3: "Work in Progress",
+#         4: "Done",
+#         5: "Failed",
+#         6: "Submitted"
+#     }
 
-    for key in statuses.keys():
-        status = Status(statusID = key, name=statuses[key])
-        db.session.add(status)
+#     for key in statuses.keys():
+#         status = Status(statusID = key, name=statuses[key])
+#         db.session.add(status)
 
-    db.session.commit()
+#     db.session.commit()

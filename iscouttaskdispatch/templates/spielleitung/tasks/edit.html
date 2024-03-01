@@ -23,11 +23,9 @@
                 <div class="col" style="margin-left: 50%;">
                     <label for="new_status">Select New Status:</label>
                     <select id="new_status" name="new_status", style="font-size: larger;">
-                        <option value="1" {% if task.status == 'Created' %}selected{% endif %}>Created</option>
-                        <option value="2" {% if task.status == 'Assigned' %}selected{% endif %}>Assigned</option>
-                        <option value="3" {% if task.status == 'Work in Progress' %}selected{% endif %}>Work in Progress</option>
-                        <option value="4" {% if task.status == 'Done' %}selected{% endif %}>Done</option>
-                        <option value="5" {% if task.status == 'Failed' %}selected{% endif %}>Failed</option>
+                        {% for s in statuses %}
+                        <option value="{{ s.id }}" {% if task.status == s.name %}selected{% endif %}>{{s.name}}</option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>

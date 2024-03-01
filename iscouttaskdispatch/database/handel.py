@@ -158,7 +158,7 @@ def getAllStatuses():
     return {s.statusID: s.name for s in Status.query.all()}
 
 
-def get_tasks_with_latest_status_by_team(teamID):
+def get_tasks_with_latest_status_by_team(teamID, inOrder = False):
     # Join Task, TaskHasStatus, and Status tables. Filter by teamID.
     # Order by taskID and timestamp to ensure we get the latest status for each task.
     tasks_with_status = db.session.query(
@@ -196,11 +196,12 @@ def get_tasks_with_latest_status_by_team(teamID):
             processed_tasks.add(task.taskID)  # Mark this task as processed
 
     # Sort the results by last_updated
-    sorted_latest_status_per_task = sorted(
-        latest_status_per_task, key=lambda x: x['last_updated'], reverse=True)
+    if not inOrder:
+        latest_status_per_task = sorted(
+            latest_status_per_task, key=lambda x: x['last_updated'], reverse=True)
 
     # Format the last_updated timestamps using formatDatetime
-    for task in sorted_latest_status_per_task:
+    for task in latest_status_per_task:
         task['last_updated'] = formatDatetime(task['last_updated'])
 
-    return sorted_latest_status_per_task
+    return latest_status_per_task

@@ -26,9 +26,11 @@ def index():
 @tasks_site.route("/<int:taskID>/edit")
 def editTask(taskID):
     task = getTaskViaID(taskID)
-    status = getStatusOfTask(task['taskID'])
-    task['status'] = status['name']
-    return render_template("spielleitung/tasks/edit.html", task=task)
+    taskStatus = getStatusOfTask(task['taskID'])
+    task['status'] = taskStatus['name']
+    return render_template("spielleitung/tasks/edit.html", 
+                           task=task,
+                           statuses=[{"id": k , "name": v} for k,v in getAllStatuses().items()])
 
 
 @tasks_site.route("/<int:taskID>/update", methods=["POST"])
