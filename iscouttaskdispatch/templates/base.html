@@ -18,7 +18,7 @@
     </div>
     {% endif %}
     <div class="navbar">
-        <a href="{{ url_for('site.index') }}">Home</a>
+        {% block defnavbar %}<a href="{{ url_for('site.index') }}">Home</a>{% endblock %}
         {% block navbar %}{% endblock %}
     </div>
     <div class="content">

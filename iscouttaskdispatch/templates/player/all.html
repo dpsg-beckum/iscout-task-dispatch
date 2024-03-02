@@ -1,0 +1,62 @@
+{% extends 'player/index.html' %}
+
+{% block title %}Allteams{% endblock %}
+
+{% block defnavbar %}
+{% endblock %}
+{% block navbar %}
+{% endblock %}
+
+
+{% block content %}
+<div>
+    {% for team in teams%}
+    <div style="margin: 10px;">
+        <h1>
+            Team: {{ team.team.teamID }} {{ team.team.name }} [{{ team.team.description }}]
+        </h1>
+        <div class="container">
+            {% if team.tasks.failed_tasks %}
+            <h2 style="color: var(--failed-color);"> Fehlgeschlagende Aufgabe </h2>
+            {% for task in team.tasks.failed_tasks %}
+            <div style="background-color: var(--failed-color-background);">
+                <h3>{{ task.taskID }}. {{ task.name }}</h3>
+                <p>
+                    {% autoescape false %}
+                    {{ task.description }}
+                    {% endautoescape %}
+                </p>
+                <p>
+                    {{ task.last_updated }}
+                </p>
+                <br>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if team.tasks.wip_task %}
+            {% for task in team.tasks.wip_task %}
+            <h3>{{ task.taskID }}. {{ task.name }}</h3>
+            <p>
+                {% autoescape false %}
+                {{ task.description }}
+                {% endautoescape %}
+            </p>
+            <p>
+                {{ task.last_updated }}
+            </p>
+            <br>
+            {% endfor %}
+            {% else %}
+            <h2>Aktuell keine Aufgabe, Bitte weise dir selber welche zu!</h2>
+
+            <p>Bitte Fange an eine Zu bearbeiten</p>
+            {% endif %}
+        </div>
+    </div>
+
+    {%endfor%}
+
+</div>
+
+{% endblock %}

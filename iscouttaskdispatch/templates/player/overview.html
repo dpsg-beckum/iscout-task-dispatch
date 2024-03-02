@@ -7,8 +7,8 @@
 <a href="{{ url_for('site.player_site.leader', teamID=team.teamID ) }}">Captain</a>
 {% endblock %}
 
+{% block content %}
 <div style="margin: 10px;">
-    {% block content %}
 
     <h1>
         Team: {{ team.teamID }} {{ team.name }}

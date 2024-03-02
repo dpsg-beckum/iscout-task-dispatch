@@ -19,6 +19,10 @@
             <div>
                 <div id="SUB"></div>
             </div>
+            <h2>Done</h2>
+            <div>
+                <div id="DONE"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -82,18 +86,27 @@
             var tdForm = document.createElement('td');
             var form = document.createElement('form');
             // Assuming you need to construct the URL dynamically based on taskID
-            if (task['statusID'] == 6) { form.action = "/api/task/" + task['taskID'] + "/setstatus/" + 4; }
-            else if (task['statusID'] == 3) { form.action = "/api/task/" + task['taskID'] + "/setstatus/" + 6; }
+
+            form.method = "POST";
+            var input = document.createElement('input');
+            input.type = "submit";
+            if (task['statusID'] == 6) {
+                form.action = "/api/task/" + task['taskID'] + "/setstatus/" + 4;
+                input.value = "Als Fertig Markieren";
+            }
+            else if (task['statusID'] == 3) {
+                form.action = "/api/task/" + task['taskID'] + "/setstatus/" + 6;
+                input.value = "Als Abgegeben Markieren";
+            }
+            else if (task['statusID'] == 4) {
+                form.action = "/api/task/" + task['taskID'] + "/setstatus/" + 5;
+                input.value = "Als FEHLGESCHLAGEN Markieren";
+            }
             else {
                 console.error("Error StatusID:" + task['statusID'])
                 console.error(status, task['statusID'] == 6, task['statusID'] == 3)
                 console.error(task)
             }
-            form.method = "POST";
-            var input = document.createElement('input');
-            input.type = "submit";
-            if (task['statusID'] == 6) { input.value = "Als Fertig Markieren"; }
-            if (task['statusID'] == 3) { input.value = "Als Abgegeben Markieren"; }
 
             attachFormSubmitListener(form);
 
@@ -142,6 +155,7 @@
         }
         drawList("WIP", 3, "")
         drawList("SUB", 6, "")
+        drawList("DONE", 4, "")
     }
 
     async function fetchJsonData(url) {
