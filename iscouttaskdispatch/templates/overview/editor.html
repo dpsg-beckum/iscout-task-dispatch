@@ -151,7 +151,7 @@
 
     function drawSite() {
         if (Object.keys(site_data.tasks).length === 0) {
-            displaySocketError('No Data');
+            console.log("Keine Daten")
         }
         drawList("WIP", 3, "")
         drawList("SUB", 6, "")
