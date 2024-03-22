@@ -1,5 +1,7 @@
 # iScoutTaskDispatch
-Eine Webapp die zur Aufgabenverteilung und Monitorung von Teams für [iScout](https://iscoutgame.com) verwendet werden kann.
+Eine Webapp die zur Aufgabenverteilung und Monitorung von Teams für [iScout](https://iscoutgame.com) verwendet werden kann. Eine Testinstallation kann [hier](https://iscout.test.jonahwille.de) gefunden werden.
+
+Dieses Projekt ist in Arbeit.
 
 # Run the Software
 ### using flask
