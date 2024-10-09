@@ -1,21 +1,23 @@
-# site/views/task_views.py
-from flask import render_template, request, redirect, url_for
-from ....database.handel import *
-from ....tools import formatDatetime
-from flask import Blueprint
-import time
 from datetime import datetime
 
+from flask import Blueprint, redirect, render_template, request, url_for
+
+from ....database.db import Task, Team
+from ....tools import formatDatetime
+
 tasks_site = Blueprint("tasks_site", __name__, url_prefix="/tasks")
+
 
 @tasks_site.route("/")
 def index():
     current_time = datetime.now().strftime('%H:%M:%S')
-    teams = {i['teamID']:i['name'] for i in getAllTeams()}
+    teams = {i['teamID']: i['name'] for i in getAllTeams()}
     tasks = getAllTasks()
     for task in tasks:
-        task['description'] = task['description'].replace("\r", "").replace("\n","<br>")
-        task['teamName'] = teams[task['teamID']] if task['teamID'] != None else "Kein Team Ausgewählt"
+        task['description'] = task['description'].replace(
+            "\r", "").replace("\n", "<br>")
+        task['teamName'] = teams[task['teamID']
+                                 ] if task['teamID'] != None else "Kein Team Ausgewählt"
         status = getStatusOfTask(task['taskID'])
         task['status'] = status['name']
         task['statusText'] = status['text']
@@ -28,9 +30,9 @@ def editTask(taskID):
     task = getTaskViaID(taskID)
     taskStatus = getStatusOfTask(task['taskID'])
     task['status'] = taskStatus['name']
-    return render_template("spielleitung/tasks/edit.html", 
+    return render_template("spielleitung/tasks/edit.html",
                            task=task,
-                           statuses=[{"id": k , "name": v} for k,v in getAllStatuses().items()])
+                           statuses=[{"id": k, "name": v} for k, v in getAllStatuses().items()])
 
 
 @tasks_site.route("/<int:taskID>/update", methods=["POST"])
@@ -57,7 +59,8 @@ def createTaskSite():
         form_data["description"] = request.form.get("description").strip()
 
         try:
-            createTask(form_data["taskID"], form_data["name"], form_data["description"], "Created via UI")
+            createTask(form_data["taskID"], form_data["name"],
+                       form_data["description"], "Created via UI")
             return redirect(url_for(".index"))
         except ElementAlreadyExists:
             error_message = "Task with the provided ID already exists."
@@ -90,11 +93,13 @@ def assignTaskSite(taskID):
 
 @tasks_site.route("/<taskID>")
 def specificTask(taskID):
-    teams = {i['teamID']:i['name'] for i in getAllTeams()}
+    teams = {i['teamID']: i['name'] for i in getAllTeams()}
     statuses = getAllStatusesOfTask(int(taskID))
     for status in statuses:
         status['timestamp'] = formatDatetime(status['timestamp'])
     task = getTaskViaID(taskID)
-    task['description'] = task['description'].replace("\r", "").replace("\n","<br>")
-    task['teamName'] = teams[task['teamID']] if task['teamID'] != None else "Kein Team Ausgewählt"
+    task['description'] = task['description'].replace(
+        "\r", "").replace("\n", "<br>")
+    task['teamName'] = teams[task['teamID']
+                             ] if task['teamID'] != None else "Kein Team Ausgewählt"
     return render_template("spielleitung/tasks/task.html", task=task, statuses=statuses)

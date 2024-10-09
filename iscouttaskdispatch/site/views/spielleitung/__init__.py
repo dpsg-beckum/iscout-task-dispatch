@@ -1,11 +1,11 @@
-from .team import teams_site
-from .task import tasks_site
-from flask import render_template, request, abort, redirect, url_for
-from ....database.handel import *
-from ....tools import formatDatetime
-from flask import Blueprint
 import time
 from datetime import datetime
+
+from flask import Blueprint, abort, redirect, render_template, request, url_for
+
+from ....tools import formatDatetime
+from .task import tasks_site
+from .team import teams_site
 
 spielleitung_site = Blueprint(
     "spielleitung_site", __name__, url_prefix="/spielleitung")

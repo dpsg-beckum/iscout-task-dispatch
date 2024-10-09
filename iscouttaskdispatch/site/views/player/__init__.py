@@ -1,10 +1,11 @@
-from flask import render_template, request, abort, redirect, url_for
-from ....database.handel import *
-from ....tools import formatDatetime
-from flask import Blueprint
 import time
 from datetime import datetime
 from pprint import pprint
+
+from flask import Blueprint, abort, redirect, render_template, request, url_for
+
+from ....database.db import Task, Team
+from ....tools import formatDatetime
 
 player_site = Blueprint("player_site", __name__, url_prefix="/player")
 
