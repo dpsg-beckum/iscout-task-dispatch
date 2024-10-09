@@ -1,29 +1,46 @@
-from flask import Flask
+import logging
+import os
 from pathlib import Path
-from .site import site
-from .api import api
 
-print("Hello from Init Script")
+from flask import Flask
+
+from .database.seed import seed_database
+
 
 def create_app():
+    logging.basicConfig(level=logging.INFO)
+    logging.info("Creating App")
 
+    INSTANCE_PATH = os.path.abspath(os.path.join(
+        os.path.abspath(__path__[0]), "../instance"))
+
+    logging.info(f"Instance Path: {INSTANCE_PATH}")
 
     app = Flask(__name__)
 
+    CONFIG_PATH = Path(INSTANCE_PATH) / "config.cfg"
+    if CONFIG_PATH.is_file():
+        app.config.from_pyfile(str(CONFIG_PATH))
+        logging.info(f"Loaded Config from {CONFIG_PATH}")
+        if app.config.get("DEBUG", False):
+            logging.info(f"Config:{str(app.config)}")
+    else:
+        logging.warning(f"No Config File Found at {CONFIG_PATH}")
+
     from iscouttaskdispatch.database import db
-
-    db_path = Path(app.instance_path)
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path.absolute()}'
-    app.config['FLASK_DB_SEEDS_PATH'] = (Path(app.root_path) / "./seeds.py").absolute()
-    #app.config['SQLALCHEMY_ECHO'] = True  # Enable echoing of SQL statements
-
-    # Initialize database with Flask SQLAlchemy or similar
-    from .database import db
     db.init_app(app)
 
-    # Register Blueprints
+    with app.app_context():
+        db.create_all()
+
+        NEW_DB = all(db.session.query(table).first()
+                     is None for table in db.metadata.sorted_tables)
+
+        if NEW_DB:
+            logging.info("All tables are empty. Seeding database...")
+            seed_database()
+
+    from .site import site
     app.register_blueprint(site)
-    # Register API Blueprint if you have one
-    app.register_blueprint(api)
 
     return app
