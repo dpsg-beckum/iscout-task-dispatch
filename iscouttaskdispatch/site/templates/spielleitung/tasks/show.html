@@ -1,0 +1,160 @@
+{% extends 'spielleitung/tasks/index.html' %}
+
+{% block title %}Show Task {{task.id}}{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <div class="container my-5">
+        <div class="card shadow border-0">
+            <div class="card-header bg-{{ task.status.html_color }} text-white">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h1 class="h4 mb-0">{{ task.id }}. {{ task.name }}</h1>
+                    </div>
+                    <div>
+                        <span class="badge bg-{{ task.status.html_color }} text-white">{{ task.status.name }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">Description:</h5>
+                        <p>{{ task.description }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">Team:</h5>
+                        {% if task.team %}
+                        <span class="badge bg-info text-black">{{ task.team.name }}</span>
+                        {% else %}
+                        <p>Kein Team</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">Format:</h5>
+                        <p>{{ task.format }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">Comments:</h5>
+                        <p>{{ task.comment if task.comment else 'none' }}</p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">Link:</h5>
+                        <p>
+                            {% if task.link %}
+                            <a href="{{ task.link }}" target="_blank">{{ task.link }}</a>
+                            {% else %}
+                            No link provided
+                            {% endif %}
+
+                        </p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">Actions:</h5>
+
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
+                            data-bs-target="#failModal">
+                            <i class="bi bi-exclamation-circle"></i>
+                        </button>
+
+                        <a class="btn btn-outline-warning"
+                            href="{{ url_for('site.spielleitung.tasks.edit', id=task.id)}}">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+
+                        <!-- <button type="submit" name="{{ form.success.name }}" class="btn btn-outline-success"
+                            id="{{ form.success.id }}" value="Success">
+                            <i class="bi bi-check2"></i>
+                        </button> -->
+
+                        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
+                            data-bs-target="#successModal">
+                            <i class="bi bi-check2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="mt-5">
+
+        <div class="accordion" id="taskLogsAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="logsHeading">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#logsCollapse" aria-expanded="true" aria-controls="logsCollapse">
+                        Logs
+                    </button>
+                </h2>
+                <div id="logsCollapse" class="accordion-collapse collapse show" aria-labelledby="logsHeading"
+                    data-bs-parent="#taskLogsAccordion">
+                    <div class="accordion-body">
+                        {% for log in task.log.split('\n') %}
+                        <div class="log-entry">
+                            <p class="mb-1">{{ log }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="failModal" tabindex="-1" aria-labelledby="failModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="failModalLabel">Fehlgeschlagen?</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Bist du Sicher das du diese Aufgabe als <span class="badge text-bg-danger">Fehlgeschlagen</span>
+                        Markieren möchtest?
+                    </p>
+
+                    <div class="form-floating">
+                        {{ form.comment(class="form-control") }}
+                        {{ form.comment.label }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                    {{ form.failed(class="btn btn-danger", value="Fehlgeschlagen") }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="successModalLabel">Fertig?</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Bist du Sicher das du diese Aufgabe als <span class="badge text-bg-success">Fertig</span>
+                        markieren
+                        möchtest?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                    {{ form.success(class="btn btn-success", value="Fertig") }}
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

@@ -1,0 +1,224 @@
+{% extends 'overview/index.html' %}
+
+{% block title %}Editor{% endblock %}
+
+
+
+
+{% block content %}
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<div class="page-div">
+    <div style="margin:10px;">
+        <div>
+            <h2>Work In Progress</h2>
+            <div>
+                <div id="WIP"></div>
+            </div>
+            <h2>Submitted</h2>
+            <div>
+                <div id="SUB"></div>
+            </div>
+            <h2>Done</h2>
+            <div>
+                <div id="DONE"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var site_data = null;
+
+    function drawList(listID, status, bg) {
+        console.debug("Drawing List");
+
+        // Get the div where the table will be displayed
+        var tableDiv = document.getElementById(listID);
+
+        // Clear the existing content in the tableDiv
+        tableDiv.innerHTML = '';
+
+        // Create a table element
+        var table = document.createElement('table');
+        table.setAttribute('class', 'task-table');
+
+        // Create the table header row
+        var thead = document.createElement('thead');
+        var headerRow = document.createElement('tr');
+
+        var headers = ["Task ID", "Name", "Team", "Form"];
+
+        // Iterate over each header and create a th element for it
+        for (var i = 0; i < headers.length; i++) {
+            var th = document.createElement('th');
+            th.textContent = headers[i];
+            th.setAttribute('style', i === 2 ? 'width: 25%;' : 'width: 10%;'); // Adjust width for the 'Description' column
+            th.style.backgroundColor = bg;
+            headerRow.appendChild(th);
+        }
+
+        var tbody = document.createElement('tbody');
+
+        var numele = 0;
+
+        // Iterate over each task in the sitedata['tasks'] array
+        for (var i = 0; i < site_data['tasks'].length; i++) {
+            var task = site_data['tasks'][i];
+            if (status != task['statusID']) {
+                continue;
+            }
+
+            // Create a table row for each task
+            var tr = document.createElement('tr');
+
+            // Create table data cells for each property of the task
+            var tdTaskID = document.createElement('td');
+            tdTaskID.textContent = task['taskID'];
+
+            var tdName = document.createElement('td');
+            tdName.textContent = task['name'];
+
+            var tdTeam = document.createElement('td');
+            tdTeam.textContent = task['teamName'];
+
+            // Create a new td for the form
+            var tdForm = document.createElement('td');
+            var form = document.createElement('form');
+            // Assuming you need to construct the URL dynamically based on taskID
+
+            form.method = "POST";
+            var input = document.createElement('input');
+            input.type = "submit";
+            if (task['statusID'] == 6) {
+                form.action = "/api/task/" + task['taskID'] + "/setstatus/" + 4;
+                input.value = "Als Fertig Markieren";
+            }
+            else if (task['statusID'] == 3) {
+                form.action = "/api/task/" + task['taskID'] + "/setstatus/" + 6;
+                input.value = "Als Abgegeben Markieren";
+            }
+            else if (task['statusID'] == 4) {
+                form.action = "/api/task/" + task['taskID'] + "/setstatus/" + 5;
+                input.value = "Als FEHLGESCHLAGEN Markieren";
+            }
+            else {
+                console.error("Error StatusID:" + task['statusID'])
+                console.error(status, task['statusID'] == 6, task['statusID'] == 3)
+                console.error(task)
+            }
+
+            attachFormSubmitListener(form);
+
+
+            form.appendChild(input);
+            tdForm.appendChild(form);
+
+            // Append the table data cells to the table row
+            tr.appendChild(tdTaskID);
+            tr.appendChild(tdName);
+            tr.appendChild(tdTeam);
+            tr.appendChild(tdForm);
+            tbody.appendChild(tr);
+        }
+
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        tableDiv.appendChild(table);
+    }
+
+    function attachFormSubmitListener(formElement) {
+        formElement.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            var formData = new FormData(formElement); // Adjust based on your form's inputs
+
+            fetch(formElement.action, {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (response.ok) {
+                    console.log("Form submitted successfully");
+                } else {
+                    console.error("Form submission failed");
+                    alert("Form submission failed")
+                }
+                getData();
+            }).catch(error => console.error('Error submitting form:', error));
+        });
+    }
+
+
+    function drawSite() {
+        if (Object.keys(site_data.tasks).length === 0) {
+            console.log("Keine Daten")
+        }
+        drawList("WIP", 3, "")
+        drawList("SUB", 6, "")
+        drawList("DONE", 4, "")
+    }
+
+    async function fetchJsonData(url) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+
+            // Return the JSON data
+            return data;
+        } catch (error) {
+            displaySocketError(error);
+            console.error("Error fetching JSON data: ", error);
+        }
+    }
+
+    function displaySocketError(errmsg) {
+        // Create a modal overlay
+        var modalOverlay = document.createElement('div');
+        modalOverlay.setAttribute('class', 'modal-overlay');
+
+        // Create the modal content
+        var modalContent = document.createElement('div');
+        modalContent.setAttribute('class', 'modal-content');
+
+        // Create an error message
+        var errorMessage = document.createElement('p');
+        errorMessage.textContent = errmsg;
+
+        // Create a close button
+        var closeButton = document.createElement('button');
+        closeButton.textContent = 'Close';
+        closeButton.addEventListener('click', function () {
+            // Remove the modal overlay when the close button is clicked
+            modalOverlay.remove();
+        });
+        modalContent.appendChild(closeButton);
+
+        // Append the error message and close button to the modal content
+        modalContent.appendChild(errorMessage);
+
+        // Append the modal content to the modal overlay
+        modalOverlay.appendChild(modalContent);
+
+        // Append the modal overlay to the body
+        document.body.appendChild(modalOverlay);
+    }
+
+
+    const url = "{{ url_for('api.getGeneralData') }}"; // Replace with your target URL
+    function getData() {
+        fetchJsonData(url).then(data => {
+            site_data = data;
+            console.debug(data); // Do something with the data
+            drawSite();
+        });
+    }
+
+    getData()
+
+    setInterval(getData, 5000);
+</script>
+
+{% endblock %}

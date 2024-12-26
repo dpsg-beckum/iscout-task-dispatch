@@ -1,45 +1,49 @@
-from flask import Flask
+import logging
+import os
 from pathlib import Path
 
-from .site import site
-from .api import api
+from flask import Flask
 
-print("Hello from Init Script")
+from .database.seed import seed_database, seed_demo_data
+
 
 def create_app():
+    logging.basicConfig(level=logging.INFO)
+    logging.info("Creating App")
 
+    INSTANCE_PATH = os.path.abspath(os.path.join(
+        os.path.abspath(__path__[0]), "../instance"))
+
+    logging.info(f"Instance Path: {INSTANCE_PATH}")
 
     app = Flask(__name__)
 
+    CONFIG_PATH = Path(INSTANCE_PATH) / "config.cfg"
+    if CONFIG_PATH.is_file():
+        app.config.from_pyfile(str(CONFIG_PATH))
+        logging.info(f"Loaded Config from {CONFIG_PATH}")
+        if app.config.get("DEBUG", False):
+            logging.info(f"Config:{str(app.config)}")
+    else:
+        logging.warning(f"No Config File Found at {CONFIG_PATH}")
+
     from iscouttaskdispatch.database import db
-
-    db_path = Path(app.instance_path)
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path.absolute()}'
-    app.config['FLASK_DB_SEEDS_PATH'] = (Path(app.root_path) / "./seeds.py").absolute()
-
-    print(db_path)
-
-    NEW_DB = not Path.is_file(db_path)
-
     db.init_app(app)
 
-    print(f"is new DB: {NEW_DB}")
-    
+    with app.app_context():
+        db.create_all()
 
-    if NEW_DB:
-        with app.app_context():
-            app.logger.info(f"Seeding database at {db_path.absolute()}")
-            db.create_all()
-            seeds_path = app.config.get("FLASK_DB_SEEDS_PATH")
-            if Path.exists(seeds_path):
-                exec(open(seeds_path).read())
-            else:
-                app.logger.error(
-                    "Could not seed database because of a missing file")
-    else:
-        print("DB already created")
+        NEW_DB = all(db.session.query(table).first()
+                     is None for table in db.metadata.sorted_tables)
 
+        if NEW_DB:
+            logging.info("All tables are empty. Seeding database...")
+            seed_database()
+            if app.config.get("DEMO", False):
+                app.logger.info("Seeding demo data...")
+                seed_demo_data()
+
+    from .site import site
     app.register_blueprint(site)
-    app.register_blueprint(api)
 
     return app

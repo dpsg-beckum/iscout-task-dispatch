@@ -1,0 +1,41 @@
+{% extends 'spielleitung/index.html' %}
+
+{% block title %}Team List{% endblock %}
+
+{% block navbar %}
+{{ super() }}
+<a href="{{ url_for('site.spielleitung.teams.index') }}">Teams</a>
+<a href="{{ url_for('.create') }}">Create New</a>
+{% endblock %}
+
+{% block content %}
+<div>
+    <div class="page-div">
+        <h1>Teams</h1>
+        <table style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>teamID</th>
+                    <th>name</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in teams %}
+                <tr>
+                    <td>{{ team.teamID }}</td>
+                    <td>{{ team.name }}</td>
+                    <td>{{ team.description }}</td>
+                    <td>
+                        <div>
+                            <a href="{{ url_for('.editTeam', teamID=team.teamID) }}">Edit</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

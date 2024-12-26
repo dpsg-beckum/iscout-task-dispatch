@@ -1,0 +1,5 @@
+created: #0000ff
+assigned: #00ff00
+workinprogress: #ffa500
+done: #800080
+failed: #ff0000

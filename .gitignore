@@ -62,7 +62,8 @@ db.sqlite3
 db.sqlite3-journal
 
 # Flask stuff:
-instance/
+instance/*
+!instance/.gitkeep
 .webassets-cache
 
 # Scrapy stuff:
@@ -161,3 +162,5 @@ cython_debug/
 
 secrets.json
 mysql-data/
+/devtools
+!instance/config.example.cfg

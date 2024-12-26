@@ -1,0 +1,28 @@
+{% extends 'spielleitung/teams/index.html' %}
+
+{% block title %}Create team{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Create team</h1>
+    <form action="{{ url_for('.create') }}" method="post">
+        <label for="teamID">team ID:</label>
+        <input class="form-input" type="number" id="teamID" name="teamID" value="{{ form_data['teamID'] }}" required>
+        <br>
+        <label for="name">team Name:</label>
+        <input class="form-input" type="text" id="name" name="name" value="{{ form_data['name'] }}">
+        <label for="desc">team Desc:</label>
+        <input class="form-input" type="text" id="desc" name="desc" value="{{ form_data['desc'] }}">
+        <br>
+        <input class="form-input form-submit" type="submit" value="Create team">
+    </form>
+
+    {% if error_message %}
+    <div class="error-message">
+        {{ error_message }}
+    </div>
+    {% endif %}
+    <br>
+    <a href="{{ url_for('.index') }}">Back to team List</a>
+</div>
+{% endblock %}

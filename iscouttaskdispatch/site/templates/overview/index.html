@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Overview{% endblock %}
+
+{% block navbar %}
+{{ super() }}
+<a href="{{ url_for('site.overview.index') }}">Übersicht</a>
+<a href="{{ url_for('site.overview.editor') }}">Editor</a>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid my-4">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 g-4">
+        {% for team in teams %}
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ team.name }}</h5>
+
+                    {% for task in team.tasks %}
+                    <div class="card text-bg-{{task.status.html_color}} my-3">
+                        <p>{{task.name}}</p>
+                        <p>{{task.description}}</p>
+                        <p>{{task}}</p>
+
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

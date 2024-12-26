@@ -1,0 +1,28 @@
+{% extends 'spielleitung/teams/index.html' %}
+
+{% block title %}Edit Team{% endblock %}
+
+{% block content %}
+<div class="page-div">
+    <div>
+        <h1>Edit Team {{ team.teamID }}</h1>
+        <form action="{{ url_for('.edit', teamID=team.teamID) }}" method="post">
+            <label for="name">Team Name:</label>
+            <input class="form-input" type="text" id="name" name="name" value="{{ team.name }}">
+            <br>
+            <label for="desc">Team Desc:</label>
+            <input class="form-input" type="desc" id="desc" name="desc" value="{{ team.description }}">
+            <br>
+            <input class="form-input form-submit" type="submit" value="Update Team">
+        </form>
+    </div>
+    <div class="page-div">
+        <details>
+            <summary>Danger Zone</summary>
+            <form action="{{ url_for('.delete', teamID=team.teamID) }}" method="post">
+                <input style="background-color: red;" type="submit" value="Delete Team">
+            </form>
+        </details>
+    </div>
+</div>
+{% endblock %}

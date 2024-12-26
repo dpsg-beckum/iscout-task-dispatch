@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Neues Team erstellen{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Neues Team erstellen</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+
+        <div class="form-floating mb-3">
+            {{ form.name(class="form-control" + (' is-invalid' if form.name.errors else '')) }}
+            {{ form.name.label }}
+            {% if form.name.errors %}
+            <div class="invalid-feedback">
+                {{ form.name.errors[0] }}
+            </div>
+            {% endif %}
+        </div>
+
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ team.name }}{% endblock %}
+
+{% block navbar %}
+{{ super() }}
+<a href="{{ url_for('site.team.leader', teamID=team.teamID ) }}">Captain</a>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="overview">Übersicht</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="tasks">Verfügbare Aufgaben</a>
+        </li>
+    </ul>
+
+
+    <div class="my-2">
+        {% if failed_tasks %}
+        {% for task in failed_tasks %}
+        <div class="card border-danger text-danger">
+            <div class="card-body">
+                <h5 class="card-title">
+                    {{ task.id }}. {{ task.name }}
+                </h5>
+                <p class="card-text">{{ task.description }}</p>
+
+
+
+                {% if task.comment %}
+                <div class="card text-bg-danger my-2">
+                    <div class="card-header fw-bold">
+                        Die Spielleitung sagt:
+                    </div>
+                    <div class="card-body p-2">
+                        <p class="m-0">
+                            {% for i in task.comment.split("\n") %}
+                            {{ i }}<br>
+                            {% endfor %}
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <p class="card-text fw-light">{{ task.format }}</p>
+                    </div>
+                    <div>
+                        {% if task.link %}
+                        <a class="btn btn-secondary" href="{{ task.link }}" target="_blank">
+                            <i class="bi bi-globe"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <hr>
+        {% endif %}
+
+        {% for task in assigned_tasks %}
+        <div class="card my-2">
+            <div class="card-body">
+                <h5 class="card-title">
+                    {{ task.id }}. {{ task.name }}
+                </h5>
+                <p class="card-text">{{ task.description }}</p>
+
+                {% if task.comment %}
+                <div class="card text-bg-light my-2">
+                    <div class="card-header fw-bold">
+                        Die Spielleitung sagt:
+                    </div>
+                    <div class="card-body p-2">
+                        <p class="m-0">
+                            {% for i in task.comment.split("\n") %}
+                            {{ i }}<br>
+                            {% endfor %}
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <p class="card-text fw-light">{{ task.format }}</p>
+                    </div>
+                    <div>
+                        {% if task.link %}
+                        <a class="btn btn-secondary" href="{{ task.link }}" target="_blank">
+                            <i class="bi bi-globe"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if not assigned_tasks %}
+        <div class="alert alert-info my-2" role="alert">
+            Keine Aufgaben zu Bearbeiten
+        </div>
+        {% endif %}
+
+        <!-- {{ team }} -->
+    </div>
+</div>
+
+{% endblock %}
