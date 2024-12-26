@@ -1,46 +1,94 @@
 {% extends 'spielleitung/tasks/index.html' %}
 
-{% block title %}Edit Task{% endblock %}
+{% block title %}Edit Task {{task.id}}{% endblock %}
 
 {% block content %}
-<div class="page-div">
-    <h1>Edit Task {{ task.taskID }}</h1>
-    <div>
-        <form action="{{ url_for('.updateTask', taskID=task.taskID) }}" method="post">
-            <label for="name">Task Name:</label>
-            <input class="form-input" type="text" id="name" name="name" value="{{ task.name }}">
-            <br>
-            <label for="description">Task Description:</label>
-            <textarea class="form-textarea" id="description" name="description">{{ task.description }}</textarea>
-            <br>
-            <div class="row" style="width: 50%;">
-                <div class="col" style="width: 50%; float: left;">
-                    <label for="status">Current Status:</label>
-                    <div class="statusfield {% if task.status == 'Created' %}status-created{% elif task.status == 'Assigned' %}status-assigned{% elif task.status == 'Work in Progress' %}status-work-in-progress{% elif task.status == 'Done' %}status-done{% elif task.status == 'Failed' %}status-failed{% endif %}">
-                        <p>{{ task.status }}</p> <!-- Display the current status -->
+<form action="" method="post">
+    <div class="container">
+        <h1>Edit Task {{task.id}}</h1>
+
+        {{ form.hidden_tag() }}
+
+        <div class="form-floating mb-3">
+            {{ form.name(class="form-control") }}
+            {{ form.name.label }}
+        </div>
+
+        <div class="form-floating mb-3">
+            {{ form.description(class="form-control", style="height: 200px") }}
+            {{ form.description.label }}
+        </div>
+
+        <div class="form-floating mb-3">
+            {{ form.format(class="form-control") }}
+            {{ form.format.label }}
+        </div>
+
+        <div class="form-floating mb-3">
+            {{ form.link(class="form-control") }}
+            {{ form.link.label }}
+        </div>
+
+        <div class="form-floating mb-3">
+            {{ form.comment(class="form-control") }}
+            {{ form.comment.label }}
+        </div>
+
+        <div class="form-floating mb-3">
+            {{ form.status(class="form-select") }}
+            {{ form.status.label }}
+        </div>
+
+        <div class="form-floating mb-3">
+            {{ form.team(class="form-select") }}
+            {{ form.team.label }}
+        </div>
+
+        <div>
+            {{ form.submit(class="btn btn-primary") }}
+
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                Delete
+            </button>
+        </div>
+
+        <hr class="mt-5">
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Logs
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        {% for log in logs %}
+                        {{ log }} <br>
+                        {% endfor %}
                     </div>
                 </div>
-                <div class="col" style="margin-left: 50%;">
-                    <label for="new_status">Select New Status:</label>
-                    <select id="new_status" name="new_status", style="font-size: larger;">
-                        {% for s in statuses %}
-                        <option value="{{ s.id }}" {% if task.status == s.name %}selected{% endif %}>{{s.name}}</option>
-                        {% endfor %}
-                    </select>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteModalLabel">Löschen</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Bist du Sicher das du diese Aufgabe löschen möchtest?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    {{ form.delete(class="btn btn-danger") }}
                 </div>
             </div>
-            
-            <br>
-            <input class="form-input form-submit" type="submit" value="Update Task">
-        </form>
+        </div>
     </div>
-    <div class="page-div">
-        <details>
-            <summary>Danger Zone</summary>
-            <form action="{{ url_for('.deleteTaskSite', taskID=task.taskID) }}" method="post">
-                <input style="background-color: red;" type="submit" value="Delete Task">
-            </form>
-        </details>
-    </div>
-</div>
+</form>
 {% endblock %}

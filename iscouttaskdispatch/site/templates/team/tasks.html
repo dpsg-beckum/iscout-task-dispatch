@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ team.name }}{% endblock %}
+
+
+{% block content %}
+<div class="container">
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="overview">Übersicht</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="tasks">Verfügbare Aufgaben</a>
+        </li>
+    </ul>
+
+    {% for task in tasks %}
+    <div class="card my-2">
+        <div class="card-body">
+            <form action="" method="post">
+                <input type="hidden" name="task_id" value="{{task.id}}">
+                <h5 class="card-title">
+                    {{ task.id }}. {{ task.name }}
+                </h5>
+                <p class="card-text">{{ task.description }}</p>
+                <p class="card-text fw-light">{{ task.format }}</p>
+
+                {% if task.comment %}
+                <div class="card text-bg-light my-2">
+                    <div class="card-header fw-bold">
+                        Die Spielleitung sagt:
+                    </div>
+                    <div class="card-body p-2">
+                        <p class="m-0">
+                            {% for i in task.comment.split("\n") %}
+                            {{ i }}<br>
+                            {% endfor %}
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <input class="btn btn-primary" type="submit" value="Bearbeiten">
+                    </div>
+                    <div>
+                        {% if task.link %}
+                        <a class="btn btn-secondary" href="{{ task.link }}" target="_blank">
+                            <i class="bi bi-globe"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if not tasks %}
+    <div class="alert alert-info my-2" role="alert">
+        Keine Aufgaben verfügbar
+    </div>
+    {% endif %}
+
+
+</div>
+
+{% endblock %}

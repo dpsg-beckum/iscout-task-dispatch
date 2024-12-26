@@ -2,16 +2,12 @@
 
 {% block title %}Task List{% endblock %}
 
-{% block navbar %}
-{{ super() }}
-<a href="{{ url_for('site.spielleitung_site.tasks_site.index') }}">Tasks</a>
-<a href="{{ url_for('.createTaskSite') }}">Create New</a>
-{% endblock %}
 
 {% block content %}
-<div class="page-div">
+<div class="container">
     <h1>Tasks</h1>
-    <table style="width: 100%;">
+    <a class="btn btn-primary" href="{{ url_for('.create') }}">Create New</a>
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th>Task ID</th>
@@ -19,61 +15,53 @@
                 <th>Description</th>
                 <th>Team</th>
                 <th>Status</th>
-                <th>Actions</th>
+                <!-- <th>Actions</th> -->
             </tr>
         </thead>
         <tbody>
             {% for task in tasks %}
-                <tr>
-                    <td><a class="tasklink" href="{{ url_for('.specificTask', taskID=task.taskID) }}">{{ task.taskID }}</a></td>
-                    <td>{{ task.name }}</td>
-                    <td>
-                        {% autoescape false %}
-                        {{ task.description }}
-                        {% endautoescape %}
-                    </td>
-                    <td>
-                        <div style="width: 100%;">
-                            <div style="width: 30%; height: fit-content; float: left;">
-                                {{ task.teamName }}
-                            </div>
-                            <div style="margin-left: 30%; height: fit-content;">
-                                
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="{% if task.status == 'Created' %}status-created{% elif task.status == 'Assigned' %}status-assigned{% elif task.status == 'Work in Progress' %}status-work-in-progress{% elif task.status == 'Done' %}status-done{% elif task.status == 'Failed' %}status-failed{% endif %}">
-                            {{ task.status }}
-                        </div>
-                        <div>
-                            {{ task.statustimestamp }}
-                        </div>
-                        <div>
-                            {{ task.statusText }}
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <a href="{{ url_for('.editTask', taskID=task.taskID) }}">Edit</a>
-                        </div>
-                        <div>
-                            <form class="form-inline" method="POST" action="{{ url_for('.assignTaskSite', taskID=task.taskID) }}">
-                                <label for="team">Assign to Team:</label>
-                                <select name="team" id="team">
-                                    <option {% if task.teamID is none %}selected{% endif %}>None</option>
-                                    {% for team in teams %}
-                                        <option value="{{ team.teamID }}" {% if task.teamID == team.teamID %}selected{% endif %}>({{ team.teamID }}) {{ team.name }}</option>
-                                    {% endfor %}
-                                </select>
-                                <input class="taskUpdate" type="submit" value="Assign">
-                            </form>
-                        </div>
-                    </td>
-                </tr>
+            <tr class="position-relative">
+                <td>
+                    {{ task.id }}
+                    <a href="{{ url_for('site.spielleitung.tasks.show', id=task.id)}}" class="stretched-link"></a>
+                </td>
+                <td>
+                    {{ task.name }}
+                </td>
+                <td>
+                    {{ task.description }}
+                </td>
+                <td>
+                    {% if task.team %}
+                    {{ task.team.name }}
+                    {% else %}
+                    Kein Team zugewiesen
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="text-{{ task.status.html_color }}">
+                        {{ task.status.name }}
+                    </div>
+                </td>
+
+                <!-- <td>
+                    <a class="btn btn-danger" style="position: relative; z-index: 10;"
+                        href="{{ url_for('site.index')}}">
+                        <i class="bi bi-exclamation-circle"></i>
+                    </a>
+                    <a class="btn btn-warning" style="position: relative; z-index: 10;"
+                        href="{{ url_for('site.spielleitung.tasks.edit', id=task.id)}}">
+                        <i class="bi bi-pencil-fill"></i>
+                    </a>
+                    <a class="btn btn-outline-success" style="position: relative; z-index: 10;"
+                        href="{{ url_for('site.spielleitung.tasks.edit', id=task.id)}}">
+                        <i class="bi bi-pencil-fill"></i>
+                    </a>
+                </td> -->
+
+            </tr>
             {% endfor %}
         </tbody>
     </table>
-    <p style="text-align: center;">end of list</p>
 </div>
 {% endblock %}

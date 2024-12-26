@@ -4,234 +4,31 @@
 
 {% block navbar %}
 {{ super() }}
-<a href="{{ url_for('site.overview_site.index') }}">Übersicht</a>
-<a href="{{ url_for('site.overview_site.editor') }}">Editor</a>
+<a href="{{ url_for('site.overview.index') }}">Übersicht</a>
+<a href="{{ url_for('site.overview.editor') }}">Editor</a>
 {% endblock %}
 
 {% block content %}
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<div class="page-div">
-    <div style="margin:10px;">
-        <div class="flex-container">
-            <div class="flex-item">
-                <div>
-                    <div id="myPlot"></div>
+<div class="container-fluid my-4">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 g-4">
+        {% for team in teams %}
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ team.name }}</h5>
+
+                    {% for task in team.tasks %}
+                    <div class="card text-bg-{{task.status.html_color}} my-3">
+                        <p>{{task.name}}</p>
+                        <p>{{task.description}}</p>
+                        <p>{{task}}</p>
+
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
-            <div class="flex-item">
-                <div id="WIP"></div>
-            </div>
-            <div class="flex-item">
-                <div id="ERR"></div>
-            </div>
         </div>
+        {% endfor %}
     </div>
 </div>
-
-<script>
-    var site_data = null;
-
-    // Function to draw the site chart
-    function drawPlot() {
-        console.log("PLOTTING");
-        var data = {
-            type: 'pie',
-            textinfo: "label+value",
-            textposition: "inside",
-            insidetextorientation: "radial",
-            automargin: true,
-            marker: {
-                colors: [
-                    'rgb(0,0,255)',
-                    'rgb(0,128,0)',
-                    'rgb(255,165,0)',
-                    'rgb(128,0,128)',
-                    'rgb(255,0,0)',
-                ]
-            }
-        };
-
-        var layout = {
-            margin: { "t": 0, "b": 0, "l": 0, "r": 0 },
-            height: 300,
-            width: 300,
-            showlegend: false
-        };
-
-        var config = {
-            staticPlot: true,
-            responsive: true,
-        };
-
-        data.values = site_data["piechart"]["values"]
-        data.labels = site_data["piechart"]["labels"]
-
-        // Use Plotly.react to update the chart with new data
-        Plotly.react('myPlot', [data], layout, config);
-    }
-
-    function drawList(listID, sortCriteria, bg) {
-        console.log("Drawing List");
-
-        // Get the div where the table will be displayed
-        var tableDiv = document.getElementById(listID);
-
-        // Clear the existing content in the tableDiv
-        tableDiv.innerHTML = '';
-
-        // Create a table element
-        var table = document.createElement('table');
-        table.setAttribute('class', 'task-table');
-
-        // Create the table header row
-        var thead = document.createElement('thead');
-        var headerRow = document.createElement('tr');
-
-        var headers = ["Task ID", "Name", "Description", "Team", "Status"];
-
-        // Iterate over each header and create a th element for it
-        for (var i = 0; i < headers.length; i++) {
-            var th = document.createElement('th');
-            th.textContent = headers[i];
-            th.setAttribute('style', i === 2 ? 'width: 25%;' : 'width: 10%;'); // Adjust width for the 'Description' column
-            th.style.backgroundColor = bg;
-            headerRow.appendChild(th);
-        }
-
-        // Create the table body
-        var tbody = document.createElement('tbody');
-
-        var numele = 0;
-
-        // Iterate over each task in the sitedata['tasks'] array
-        for (var i = 0; i < site_data['tasks'].length; i++) {
-            var task = site_data['tasks'][i];
-
-            // Create a table row for each task
-            var tr = document.createElement('tr');
-            //tr.style.color = 'black'
-
-            // Create table data cells for each property of the task
-            var tdTaskID = document.createElement('td');
-            tdTaskID.textContent = task['taskID'];
-
-            var tdName = document.createElement('td');
-            tdName.textContent = task['name'];
-
-            var tdDescription = document.createElement('td');
-            tdDescription.textContent = String(task['description']).substring(0, 20);
-
-            var tdTeam = document.createElement('td');
-            tdTeam.textContent = task['teamName'];
-
-            var tdStatus = document.createElement('td');
-            tdStatus.textContent = task['status'];
-
-            // Append the table data cells to the table row
-            tr.appendChild(tdTaskID);
-            tr.appendChild(tdName);
-            tr.appendChild(tdDescription);
-            tr.appendChild(tdTeam);
-            tr.appendChild(tdStatus);
-
-            // Append the table row to the tbody
-            if (sortCriteria(task['statusID'])) {
-                numele++;
-                tbody.appendChild(tr);
-            }
-        }
-
-        if (numele == 0) {
-            return
-        }
-        thead.appendChild(headerRow);
-        table.appendChild(thead);
-        // Append the tbody to the table
-        table.appendChild(tbody);
-
-        // Append the table to the tableDiv
-        tableDiv.appendChild(table);
-    }
-
-
-    function drawSite() {
-        if (Object.keys(site_data.tasks).length === 0) {
-            displaySocketError('No Data');
-        }
-        drawPlot()
-        console.log(site_data['tasks'])
-        drawList("WIP", function (id) { return (id == 3) }, "")
-        drawList("ERR", function (id) { return (id == 5) }, "red")
-    }
-
-    async function fetchJsonData(url) {
-        try {
-            // Make a request to the specified URL
-            const response = await fetch(url);
-
-            // Check if the request was successful
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            // Parse the JSON response
-            const data = await response.json();
-
-            // Return the JSON data
-            return data;
-        } catch (error) {
-            displaySocketError(error);
-            console.error("Error fetching JSON data: ", error);
-        }
-    }
-
-
-    function displaySocketError(errmsg) {
-        // Create a modal overlay
-        var modalOverlay = document.createElement('div');
-        modalOverlay.setAttribute('class', 'modal-overlay');
-
-        // Create the modal content
-        var modalContent = document.createElement('div');
-        modalContent.setAttribute('class', 'modal-content');
-
-        // Create an error message
-        var errorMessage = document.createElement('p');
-        errorMessage.textContent = errmsg;
-
-        // Create a close button
-        var closeButton = document.createElement('button');
-        closeButton.textContent = 'Close';
-        closeButton.addEventListener('click', function () {
-            // Remove the modal overlay when the close button is clicked
-            modalOverlay.remove();
-        });
-        modalContent.appendChild(closeButton);
-
-        // Append the error message and close button to the modal content
-        modalContent.appendChild(errorMessage);
-
-        // Append the modal content to the modal overlay
-        modalOverlay.appendChild(modalContent);
-
-        // Append the modal overlay to the body
-        document.body.appendChild(modalOverlay);
-    }
-
-    const url = "{{ url_for('api.getGeneralData') }}"; // Replace with your target URL
-    function getData() {
-        fetchJsonData(url).then(data => {
-            site_data = data;
-            console.log(data); // Do something with the data
-            drawSite();
-        });
-    }
-
-    getData()
-
-    setInterval(getData, 5000);
-
-</script>
-
 {% endblock %}

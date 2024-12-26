@@ -2,104 +2,107 @@ from datetime import datetime
 
 from flask import Blueprint, redirect, render_template, request, url_for
 
-from ....database.db import Task, Team
+from ....database.db import Status, Task, Team
+from ....database.exceptions import ElementAlreadyExists, ElementDoesNotExsist
 from ....tools import formatDatetime
+from ...forms import EditTaskForm, NewTaskForm, ShowTaskForm
 
-tasks_site = Blueprint("tasks_site", __name__, url_prefix="/tasks")
+tasks_site = Blueprint("tasks", __name__, url_prefix="/tasks")
 
 
-@tasks_site.route("/")
+@tasks_site.get("/")
 def index():
-    current_time = datetime.now().strftime('%H:%M:%S')
-    teams = {i['teamID']: i['name'] for i in getAllTeams()}
-    tasks = getAllTasks()
-    for task in tasks:
-        task['description'] = task['description'].replace(
-            "\r", "").replace("\n", "<br>")
-        task['teamName'] = teams[task['teamID']
-                                 ] if task['teamID'] != None else "Kein Team Ausgewählt"
-        status = getStatusOfTask(task['taskID'])
-        task['status'] = status['name']
-        task['statusText'] = status['text']
-        task['statustimestamp'] = formatDatetime(status['timestamp'])
-    return render_template("spielleitung/tasks/index.html", tasks=tasks, teams=getAllTeams())
+    tasks = Task.get_all()
+    return render_template("spielleitung/tasks/index.html",
+                           tasks=[t.to_dict() for t in tasks])
 
 
-@tasks_site.route("/<int:taskID>/edit")
-def editTask(taskID):
-    task = getTaskViaID(taskID)
-    taskStatus = getStatusOfTask(task['taskID'])
-    task['status'] = taskStatus['name']
+@tasks_site.route("/<int:id>/show", methods=["GET", "POST"])
+def show(id):
+    task = Task.get_via_id(id)
+
+    form: ShowTaskForm = ShowTaskForm()
+
+    if form.failed.data and form.comment.data:
+        task.update_data(status_id=4,
+                         comment=form.comment.data,
+                         updated_by="Spielleitung")
+        print(task.comment)
+        return redirect(url_for(".index"))
+
+    if form.success.data:
+        task.update_data(status_id=3, updated_by="Spielleitung")
+        return redirect(url_for(".index"))
+
+    form.comment.data = task.comment
+
+    return render_template("spielleitung/tasks/show.html",
+                           form=form,
+                           task=task.to_dict(),
+                           logs=str(task.log).split("\n"))
+
+
+@tasks_site.route("/<int:id>/edit", methods=["GET", "POST"])
+def edit(id):
+    task = Task.get_via_id(id)
+
+    form: EditTaskForm = EditTaskForm()
+    form.status.choices = [(-1, "Unverändert")] + \
+        [(status.id, status.name) for status in Status.get_all()]
+    form.team.choices = [(-1, "Unverändert")] + \
+        [(team.id, f"#{team.id}: {team.name}") for team in Team.get_all()]
+
+    print(request.form)
+    if form.validate_on_submit():
+        if form.delete.data:
+            task.delete()
+            return redirect(url_for(".index"))
+
+        newStatus = form.status.data if int(form.status.data) != -1 else None
+
+        task.update_data(name=form.name.data,
+                         description=form.description.data,
+                         comment=form.comment.data,
+                         link=form.link.data,
+                         status_id=newStatus,
+                         format=form.format.data,
+                         updated_by="Spielleitung")
+
+        if int(form.team.data) != -1:
+            team = Team.get_via_id(int(form.team.data))
+            task.assign_to_team(team, True)
+
+        return redirect(url_for(".index"))
+
+    form.name.data = task.name
+    form.description.data = task.description
+    form.comment.data = task.comment
+    form.link.data = task.link
+    # form.status.data = task.status_id  # Wert soll nicht geändert werden um versehentliche Änderungen zu vermeiden
+    form.format.data = task.format
+
+    form.update_form()
     return render_template("spielleitung/tasks/edit.html",
+                           form=form,
                            task=task,
-                           statuses=[{"id": k, "name": v} for k, v in getAllStatuses().items()])
-
-
-@tasks_site.route("/<int:taskID>/update", methods=["POST"])
-def updateTask(taskID):
-    name = request.form.get("name")
-    description = request.form.get("description")
-    status = int(request.form.get("new_status"))
-    task = getTaskViaID(taskID)
-    if task['name'] != name or task['description'] != description or getStatusOfTask(taskID)['statusID'] != status:
-        setTaskName(taskID, name)
-        setTaskDescription(taskID, description)
-        setTaskStatus(taskID, status, "set Status via UI")
-    return redirect(url_for(".index"))
+                           logs=str(task.log).split("\n"))
 
 
 @tasks_site.route("/create", methods=["GET", "POST"])
-def createTaskSite():
-    error_message = None
-    form_data = {"taskID": None, "name": "", "description": ""}
+def create():
+    form: NewTaskForm = NewTaskForm()
 
-    if request.method == "POST":
-        form_data["taskID"] = int(str(request.form.get("taskID")))
-        form_data["name"] = request.form.get("name").strip()
-        form_data["description"] = request.form.get("description").strip()
-
+    if form.validate_on_submit():
         try:
-            createTask(form_data["taskID"], form_data["name"],
-                       form_data["description"], "Created via UI")
+            Task.create_new(id=form.taskID.data,
+                            name=form.name.data,
+                            description=form.description.data,
+                            comment=form.comment.data,
+                            link=form.link.data,
+                            format=form.format.data)
+        except ElementAlreadyExists as e:
+            form.taskID.errors.append(str(e))
+        else:
             return redirect(url_for(".index"))
-        except ElementAlreadyExists:
-            error_message = "Task with the provided ID already exists."
-        except Exception as ex:
-            error_message = str(ex)
 
-    return render_template("spielleitung/tasks/create.html", error_message=error_message, form_data=form_data)
-
-
-@tasks_site.route("/<int:taskID>/delete", methods=["POST"])
-def deleteTaskSite(taskID):
-    error_message = None
-    if request.method == "POST":
-        try:
-            deleteTask(taskID)
-            return redirect(url_for(".index"))
-        except ElementDoesNotExsist:
-            error_message = "Task with the provided ID does not exists."
-            # You can handle the error as needed, such as displaying a message to the user.
-
-    return render_template("error.html", error_message=error_message)
-
-
-@tasks_site.route("/<int:taskID>/assign", methods=["POST"])
-def assignTaskSite(taskID):
-    teamID = request.form.get("team", type=int)
-    assignTask(taskID, teamID, "Assigned via WEB UI", override=True)
-    return redirect(url_for(".index"))
-
-
-@tasks_site.route("/<taskID>")
-def specificTask(taskID):
-    teams = {i['teamID']: i['name'] for i in getAllTeams()}
-    statuses = getAllStatusesOfTask(int(taskID))
-    for status in statuses:
-        status['timestamp'] = formatDatetime(status['timestamp'])
-    task = getTaskViaID(taskID)
-    task['description'] = task['description'].replace(
-        "\r", "").replace("\n", "<br>")
-    task['teamName'] = teams[task['teamID']
-                             ] if task['teamID'] != None else "Kein Team Ausgewählt"
-    return render_template("spielleitung/tasks/task.html", task=task, statuses=statuses)
+    return render_template("spielleitung/tasks/create.html", form=form)

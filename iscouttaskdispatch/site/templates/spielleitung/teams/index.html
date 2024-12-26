@@ -4,8 +4,8 @@
 
 {% block navbar %}
 {{ super() }}
-<a href="{{ url_for('site.spielleitung_site.teams_site.index') }}">Teams</a>
-<a href="{{ url_for('.createTeamSite') }}">Create New</a>
+<a href="{{ url_for('site.spielleitung.teams.index') }}">Teams</a>
+<a href="{{ url_for('.create') }}">Create New</a>
 {% endblock %}
 
 {% block content %}

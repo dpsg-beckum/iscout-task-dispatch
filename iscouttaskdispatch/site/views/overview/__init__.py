@@ -8,7 +8,7 @@ from flask import (Blueprint, abort, jsonify, redirect, render_template,
 
 from ....tools import convert_text_to_links, formatDatetime
 
-overview_site = Blueprint("overview_site", __name__, url_prefix="/overview")
+overview_site = Blueprint("overview", __name__, url_prefix="/overview")
 
 
 @overview_site.route("/")

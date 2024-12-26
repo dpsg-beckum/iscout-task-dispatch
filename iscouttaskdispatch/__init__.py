@@ -4,7 +4,7 @@ from pathlib import Path
 
 from flask import Flask
 
-from .database.seed import seed_database
+from .database.seed import seed_database, seed_demo_data
 
 
 def create_app():
@@ -39,6 +39,9 @@ def create_app():
         if NEW_DB:
             logging.info("All tables are empty. Seeding database...")
             seed_database()
+            if app.config.get("DEMO", False):
+                app.logger.info("Seeding demo data...")
+                seed_demo_data()
 
     from .site import site
     app.register_blueprint(site)

@@ -4,12 +4,11 @@
 
 {% block navbar %}
 {{ super() }}
-<a href="{{ url_for('site.spielleitung_site.index') }}">Spielleitung</a>
+<a href="{{ url_for('site.spielleitung.index') }}">Spielleitung</a>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <h2><a href="{{ url_for('.tasks_site.index') }}" class="button">Aufgaben</a></h2>
-    <h2><a href="{{ url_for('.teams_site.index') }}" class="button">Teams</a></h2>
+    <h2><a href="{{ url_for('.tasks.index') }}" class="button">Aufgaben</a></h2>
 </div>
 {% endblock %}
