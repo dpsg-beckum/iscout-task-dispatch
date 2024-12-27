@@ -14,6 +14,7 @@ tasks_site = Blueprint("tasks", __name__, url_prefix="/tasks")
 def index():
     tasks = Task.get_all()
     return render_template("spielleitung/tasks/index.html",
+                           back=url_for("site.spielleitung.index"),
                            tasks=[t.to_dict() for t in tasks])
 
 
@@ -37,6 +38,7 @@ def show(id):
     form.comment.data = task.comment
 
     return render_template("spielleitung/tasks/show.html",
+                           back=url_for(".index"),
                            form=form,
                            task=task.to_dict(),
                            logs=str(task.log).split("\n"))
@@ -83,6 +85,7 @@ def edit(id):
 
     form.update_form()
     return render_template("spielleitung/tasks/edit.html",
+                           back=url_for(".show", id=id),
                            form=form,
                            task=task,
                            logs=str(task.log).split("\n"))
@@ -105,4 +108,6 @@ def create():
         else:
             return redirect(url_for(".index"))
 
-    return render_template("spielleitung/tasks/create.html", form=form)
+    return render_template("spielleitung/tasks/create.html",
+                           back=url_for(".index"),
+                           form=form)

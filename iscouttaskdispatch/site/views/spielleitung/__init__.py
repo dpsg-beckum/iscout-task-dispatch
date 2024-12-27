@@ -12,6 +12,13 @@ spielleitung_site = Blueprint(
 
 spielleitung_site.register_blueprint(tasks_site)
 
+# activate back button
+
+
+@spielleitung_site.context_processor
+def inject_back():
+    return dict(backact=True)
+
 
 @spielleitung_site.route("/")
 def index():
