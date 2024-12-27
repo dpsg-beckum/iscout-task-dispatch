@@ -4,7 +4,7 @@
 
 {% block content %}
 <form action="" method="post">
-    <div class="container">
+    <div>
         <h1>Edit Task {{task.id}}</h1>
 
         {{ form.hidden_tag() }}
@@ -35,21 +35,41 @@
         </div>
 
         <div class="form-floating mb-3">
-            {{ form.status(class="form-select") }}
-            {{ form.status.label }}
-        </div>
-
-        <div class="form-floating mb-3">
             {{ form.team(class="form-select") }}
             {{ form.team.label }}
         </div>
 
-        <div>
-            {{ form.submit(class="btn btn-primary") }}
+        <div class="accordion mb-3">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
+                        aria-controls="panelsStayOpen-collapseTwo">
+                        <span class="text-danger"> Danger Zone </span>
+                    </button>
+                </h2>
+                <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <div class="form-floating mb-3">
+                            {{ form.status(class="form-select") }}
+                            {{ form.status.label }}
+                        </div>
 
-            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                Delete
-            </button>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#deleteModal">
+                            Task Löschen
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div>
+            <a href="{{back}}" class="btn btn-secondary"> Abbrechen </a>
+
+            {{ form.submit(class="btn btn-primary") }}
         </div>
 
         <hr class="mt-5">

@@ -56,7 +56,7 @@ class EditTaskForm(ITD_Form):
     status = SelectField("Status", validators=[DataRequired()])
     team = SelectField("Team", validators=[DataRequired()])
     delete = SubmitField("Delete Task", name="delete")
-    submit = SubmitField("Update Task")
+    submit = SubmitField("Aktualisieren")
 
 
 class NewTeamForm(ITD_Form):
