@@ -206,6 +206,9 @@ class Task(BaseTable):
                 f"Task ist bereits zugewiesen an Team {self.team_id}")
         self.team_id = team.id
         self.status_id = 2
-        self._write_log(f"Task zugewiesen an Team {team}")
+        log = f"Task zugewiesen an {team.name}"
+        if overwrite:
+            log += f" (Überschrieben)"
+        self._write_log(log)
         db.session.commit()
         return self
