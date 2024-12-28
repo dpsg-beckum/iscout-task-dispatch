@@ -49,10 +49,12 @@ def edit(id):
     task = Task.get_via_id(id)
 
     form: EditTaskForm = EditTaskForm()
-    form.status.choices = [(-1, "Unverändert")] + \
+    form.status.choices = [(-1, f"Unverändert ({task.status.name})")] + \
         [(status.id, status.name) for status in Status.get_all()]
-    form.team.choices = [(-1, "Unverändert")] + \
-        [(team.id, f"#{team.id}: {team.name}") for team in Team.get_all()]
+    form.team.choices = [(-1, f"Unverändert ({task.team.name if task.team else "Keins"})"), (0, f"Kein Team {"(Aktuell)" if not task.team else ""}")] +  \
+        [(team.id,
+          f"#{team.id}: {team.name}" + (" (Aktuell)" if task.team and task.team.id is team.id else ""))
+         for team in Team.get_all()]
 
     print(request.form)
     if form.validate_on_submit():
@@ -71,8 +73,11 @@ def edit(id):
                          updated_by="Spielleitung")
 
         if int(form.team.data) != -1:
-            team = Team.get_via_id(int(form.team.data))
-            task.assign_to_team(team, True)
+            if int(form.team.data) == 0:
+                task.assign_to_team(None, True)
+            else:
+                team = Team.get_via_id(int(form.team.data))
+                task.assign_to_team(team, True)
 
         return redirect(url_for(".index"))
 

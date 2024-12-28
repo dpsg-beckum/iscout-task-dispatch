@@ -189,7 +189,7 @@ class Task(BaseTable):
         if self.log is None:
             self.log = ""
         self.log += datetime.now().strftime('%Y-%m-%d %H:%M:%S') + \
-            " " + log.strip() + "\n"
+            " " + log.strip().replace("\n\r", "") + "\n"
 
     def set_status(self, status_id, log=f"Status geändert auf {status_id}"):
         self.status_id = status_id
@@ -204,11 +204,22 @@ class Task(BaseTable):
         if (not overwrite) and (self.team_id and self.team_id != team.id):
             raise Exception(
                 f"Task ist bereits zugewiesen an Team {self.team_id}")
-        self.team_id = team.id
-        self.status_id = 2
+
+        if team is None:
+            self.team_id = None
+            self.status_id = 1
+            self._write_log("Task Zurückgesetzt")
+            db.session.commit()
+            return self
+
         log = f"Task zugewiesen an {team.name}"
         if overwrite:
-            log += f" (Überschrieben)"
+            if self.team_id is not None:
+                log += f" (Überschrieben)"
+            if self.team_id is team.id:
+                log += " (Zurückgesetzt)"
+        self.team_id = team.id
+        self.status_id = 2
         self._write_log(log)
         db.session.commit()
         return self
