@@ -1,14 +1,17 @@
 # iScoutTaskDispatch
-Eine Webapp die zur Aufgabenverteilung und Monitorung von Teams für [iScout](https://iscoutgame.com) verwendet werden kann. Eine Testinstallation kann [hier](https://iscout.test.jonahwille.de) gefunden werden.
 
-Dieses Projekt ist in Arbeit.
+Eine Webapp die zur Aufgabenverteilung und Monitorung von Teams für [iScout](https://iscoutgame.com) entwickelt wurde. Eine Testinstallation mit den Aufgaben von 2024 kann [hier](https://itd-test.remote1.jonahwille.de) aufgerufen werden. Entwickelt von der [DPSG St. Stephanus Beckum](https://www.dpsg-beckum.de)
 
-# Run the Software
+## Run the Software [WIP]
+
 ### using flask
+
 ```bash
 flask --app iscouttaskdispatch:create_app run --debug --host=0.0.0.0
 ```
-### using Docker
+
+### using Docker (experimental)
+
 ```bash
 docker build -t iscouttaskdispatch .
 docker run -p 80:5000 iscouttaskdispatch
