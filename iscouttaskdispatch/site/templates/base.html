@@ -16,7 +16,7 @@
 
 <body>
 
-
+    {% block navbar %}
     <div class="navbar navbar-expand bg-body-tertiary py-1">
         <div class="container-fluid">
             <div class="" id="navbarSupportedContent">
@@ -90,6 +90,7 @@
             </div>
         </div>
     </div>
+    {% endblock %}
 
 
     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -105,9 +106,11 @@
     {% endif %}
     {% endwith %}
 
+    {% block content_override %}
     <div class="container mt-3">
         {% block content %}{% endblock %}
     </div>
+    {% endblock %}
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

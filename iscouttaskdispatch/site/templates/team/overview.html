@@ -2,11 +2,6 @@
 
 {% block title %}{{ team.name }}{% endblock %}
 
-{% block navbar %}
-{{ super() }}
-<a href="{{ url_for('site.team.leader', teamID=team.teamID ) }}">Captain</a>
-{% endblock %}
-
 {% block content %}
 <div>
 
@@ -109,8 +104,6 @@
             Keine Aufgaben zu Bearbeiten
         </div>
         {% endif %}
-
-        <!-- {{ team }} -->
     </div>
 </div>
 

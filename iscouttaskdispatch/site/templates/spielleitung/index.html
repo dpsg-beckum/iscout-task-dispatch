@@ -2,11 +2,6 @@
 
 {% block title %}Spielleitung index{% endblock %}
 
-{% block navbar %}
-{{ super() }}
-<a href="{{ url_for('site.spielleitung.index') }}">Spielleitung</a>
-{% endblock %}
-
 {% block content %}
 <div>
     <h2><a href="{{ url_for('.tasks.index') }}" class="button">Aufgaben</a></h2>

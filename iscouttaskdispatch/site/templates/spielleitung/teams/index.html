@@ -2,12 +2,6 @@
 
 {% block title %}Team List{% endblock %}
 
-{% block navbar %}
-{{ super() }}
-<a href="{{ url_for('site.spielleitung.teams.index') }}">Teams</a>
-<a href="{{ url_for('.create') }}">Create New</a>
-{% endblock %}
-
 {% block content %}
 <div>
     <div class="page-div">

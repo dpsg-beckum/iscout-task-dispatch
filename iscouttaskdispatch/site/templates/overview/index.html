@@ -3,32 +3,70 @@
 {% block title %}Overview{% endblock %}
 
 {% block navbar %}
-{{ super() }}
-<a href="{{ url_for('site.overview.index') }}">Übersicht</a>
-<a href="{{ url_for('site.overview.editor') }}">Editor</a>
 {% endblock %}
 
-{% block content %}
-<div class="">
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 g-4">
-        {% for team in teams %}
-        <div class="col">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">{{ team.name }}</h5>
+{% block content_override %}
 
+<div class="container-fluid">
+    <table class="table text-center">
+        <thead>
+            <tr>
+                {% for team in teams %}
+                <th class="col-1">{{ team.name }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                {% for team in teams %}
+
+
+                <td class="col-1">
                     {% for task in team.tasks %}
-                    <div class="card text-bg-{{task.status.html_color}} my-3">
-                        <p>{{task.name}}</p>
-                        <p>{{task.description}}</p>
-                        <p>{{task}}</p>
 
+                    {% if task.status.id == 2 or task.status.id == 4 %}
+                    <div class="card my-2 border-{{ task.status.html_color }}">
+                        <div class="card-header bg-{{ task.status.html_color }} text-white">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <p class="h5 mb-0">{{ task.id }}. {{ task.name }}</p>
+                                </div>
+                                <!-- <div>
+                                    <span class="badge bg-{{ task.status.html_color }} text-white">{{ task.status.name
+                                        }}</span>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- <h5 class="card-title">
+                                {{ task.id }}. {{ task.name }}
+                            </h5> -->
+                            <!-- <p class="card-text">{{ task.description }}</p> -->
+
+                            {% if task.comment %}
+                            <div class="card text-bg-light my-2">
+                                <div class="card-body p-0">
+                                    <p class="m-0">
+                                        {% for i in task.comment.split("\n") %}
+                                        {{ i }}<br>
+                                        {% endfor %}
+                                    </p>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <p class="card-text fw-light">{{ task.format }}</p>
+                        </div>
                     </div>
+                    {% endif %}
                     {% endfor %}
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
+                </td>
+
+
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
 </div>
+
 {% endblock %}
