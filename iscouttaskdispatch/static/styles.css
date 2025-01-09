@@ -1,3 +1,5 @@
-textarea#comment {
+textarea#comment,
+textarea#comment_fail,
+textarea#comment_update {
     height: 150px;
 }

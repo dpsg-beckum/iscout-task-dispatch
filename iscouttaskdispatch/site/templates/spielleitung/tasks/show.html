@@ -1,4 +1,4 @@
-{% extends 'spielleitung/tasks/index.html' %}
+{% extends 'base.html' %}
 
 {% block title %}Show Task {{task.id}}{% endblock %}
 
@@ -27,6 +27,12 @@
                         <h5 class="fw-bold">Team:</h5>
                         {% if task.team %}
                         <span class="badge bg-info text-black">{{ task.team.name }}</span>
+
+                        {% if task.status.id == 2 or task.status.id == 4 %}
+                        <span class="badge bg-body-secondary text-{{ task.timecolor }}">
+                            {{ task.timesince }}
+                        </span>
+                        {% endif %}
                         {% else %}
                         <p>Kein Team</p>
                         {% endif %}
@@ -60,8 +66,8 @@
                     <div class="col-md-6">
                         <h5 class="fw-bold">Actions:</h5>
 
-                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
-                            data-bs-target="#failModal">
+                        <button type="button" class="btn btn-outline-danger {% if not task.team %} disabled {% endif %}"
+                            data-bs-toggle="modal" data-bs-target="#failModal">
                             <i class="bi bi-exclamation-circle"></i>
                         </button>
 
@@ -70,14 +76,17 @@
                             <i class="bi bi-pencil"></i>
                         </a>
 
-                        <!-- <button type="submit" name="{{ form.success.name }}" class="btn btn-outline-success"
-                            id="{{ form.success.id }}" value="Success">
-                            <i class="bi bi-check2"></i>
-                        </button> -->
 
-                        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
-                            data-bs-target="#successModal">
+
+                        <button type="button"
+                            class="btn btn-outline-success {% if not task.team %} disabled {% endif %}"
+                            data-bs-toggle="modal" data-bs-target="#successModal">
                             <i class="bi bi-check2"></i>
+                        </button>
+
+                        <button type="button" class="btn btn-outline-light" data-bs-toggle="modal"
+                            data-bs-target="#commentModal">
+                            <i class="bi bi-chat-dots"></i>
                         </button>
                     </div>
                 </div>
@@ -122,8 +131,8 @@
                     </p>
 
                     <div class="form-floating">
-                        {{ form.comment(class="form-control") }}
-                        {{ form.comment.label }}
+                        {{ form.comment_fail(class="form-control") }}
+                        {{ form.comment_fail.label }}
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -151,6 +160,27 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
                     {{ form.success(class="btn btn-success", value="Fertig") }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="commentModalLabel">Kommentar Bearbeiten</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating">
+                        {{ form.comment_update(class="form-control") }}
+                        {{ form.comment_update.label }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                    {{ form.update(class="btn btn-light", value="Aktualisieren") }}
                 </div>
             </div>
         </div>

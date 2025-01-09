@@ -32,9 +32,11 @@ class ITD_Form(FlaskForm):
 
 
 class ShowTaskForm(ITD_Form):
-    comment = TextAreaField("Comment", validators=[Optional()])
+    comment_update = TextAreaField("Comment", validators=[Optional()])
+    comment_fail = TextAreaField("Comment", validators=[Optional()])
     failed = SubmitField("Failed")
     success = SubmitField("Success")
+    update = SubmitField("Comment")
 
 
 class NewTaskForm(ITD_Form):

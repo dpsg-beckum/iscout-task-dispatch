@@ -4,10 +4,11 @@ from datetime import datetime
 from typing import List, Type, TypeVar
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, ForeignKey, Integer, String, Text
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, relationship
 
 from .exceptions import ElementAlreadyExists, ElementDoesNotExsist
+from .utils import time2color
 
 db = SQLAlchemy()
 
@@ -110,7 +111,10 @@ class Task(BaseTable):
     link = Column(Text)
     comment = Column(Text)
     log = Column(Text, default="")
+
     team_id = Column(Integer, ForeignKey('team.id'), nullable=True)
+
+    status_last_updated = Column(DateTime, default=datetime.now)
     status_id = Column(Integer, ForeignKey('status.id'), nullable=False)
 
     team: Mapped[Team] = relationship(
@@ -123,9 +127,19 @@ class Task(BaseTable):
         if not prevent_recursion:
             data['team'] = self.team.to_dict(True) if self.team else None
         data['status'] = self.status.to_dict() if self.status else None
+        data['status_last_updated'] = self.status_last_updated
+        data['status_last_updated_str'] = self.status_last_updated.strftime(
+            '%Y-%m-%d %H:%M:%S')
+        timesince_s = (datetime.now() -
+                       self.status_last_updated)
+        data["timesince_s"] = timesince_s.total_seconds()
+        data["timesince"] = "{:01d}:{:02d}".format(
+            timesince_s.seconds//3600, (timesince_s.seconds//60) % 60)
+        data["timecolor"] = time2color(timesince_s.total_seconds())
+
         return data
 
-    def update_data(self, name: None | str = None, description: None | str = None, comment: None | str = None, link: None | str = None, format: None | str = None, status_id: None | int = None, updated_by: str = "Unbekannt"):
+    def update_data(self, name: None | str = None, description: None | str = None, comment: None | str = None, link: None | str = None, format: None | str = None, status_id: None | int = None, updated_by: str = "Unbekannt", overwrite=False):
         logs = []
 
         if name and name != self.name:
@@ -152,10 +166,9 @@ class Task(BaseTable):
             status_id = int(status_id)
             status = Status.get_via_id(status_id)
             if status_id != self.status_id:
-                print(status_id, self.status_id)
+                self._update_status(status, overwrite)
                 logs.append(f"Status geändert auf \
                             {status.name}")
-                self.status_id = status.id
 
         if logs:
             self._write_log(f"Task aktualisiert durch \
@@ -178,8 +191,8 @@ class Task(BaseTable):
                     description=description,
                     comment=comment,
                     link=link,
-                    format=format,
-                    status_id=1)
+                    format=format)
+        task._update_status(Status.get_via_id(1), True)
         db.session.add(task)
         task._write_log("Task erstellt")
         db.session.commit()
@@ -192,8 +205,21 @@ class Task(BaseTable):
             " " + log.strip().replace("\n\r", "") + "\n"
 
     def set_status(self, status_id, log=f"Status geändert auf {status_id}"):
-        self.status_id = status_id
+        self._update_status(Status.get_via_id(status_id))
         self._write_log(log)
+        db.session.commit()
+        return self
+
+    def _update_status(self, status: Status, overwrite=False):
+        if self.status_id == status.id and not overwrite:
+            return self
+
+        if self.team_id is None and not overwrite:
+            raise Exception(
+                "Task kann nicht auf Status geändert werden, wenn er keinem Team zugewiesen ist")
+
+        self.status_id = Status.get_via_id(status.id).id
+        self.status_last_updated = datetime.now()
         db.session.commit()
         return self
 
@@ -219,7 +245,7 @@ class Task(BaseTable):
             if self.team_id is team.id:
                 log += " (Zurückgesetzt)"
         self.team_id = team.id
-        self.status_id = 2
+        self._update_status(Status.get_via_id(2))
         self._write_log(log)
         db.session.commit()
         return self

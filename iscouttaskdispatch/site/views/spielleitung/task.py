@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from ....database.db import Status, Task, Team
 from ....database.exceptions import ElementAlreadyExists, ElementDoesNotExsist
@@ -13,9 +13,14 @@ tasks_site = Blueprint("tasks", __name__, url_prefix="/tasks")
 @tasks_site.get("/")
 def index():
     tasks = Task.get_all()
+    renderedtasks = [t.to_dict() for t in tasks]
+    for task in renderedtasks:
+        task["description"] = task["description"][:100] + \
+            "..." if len(task["description"]) > 100 else task["description"]
+
     return render_template("spielleitung/tasks/index.html",
                            back=url_for("site.spielleitung.index"),
-                           tasks=[t.to_dict() for t in tasks])
+                           tasks=renderedtasks)
 
 
 @tasks_site.route("/<int:id>/show", methods=["GET", "POST"])
@@ -24,18 +29,34 @@ def show(id):
 
     form: ShowTaskForm = ShowTaskForm()
 
-    if form.failed.data and form.comment.data:
-        task.update_data(status_id=4,
-                         comment=form.comment.data,
+    if form.update.data:
+        print(f"Updating task {id} with comment: \
+            {form.comment_update.data} (previous: {task.comment})")
+        print(form.data)
+        task.update_data(comment=form.comment_update.data,
                          updated_by="Spielleitung")
-        print(task.comment)
+        return redirect(url_for(".show", id=id))
+
+    if form.failed.data:
+        try:
+            task.update_data(status_id=4,
+                             comment=form.comment_fail.data,
+                             updated_by="Spielleitung")
+        except Exception as e:
+            flash(str(e), "danger")
+            return redirect(url_for(".show", id=id))
         return redirect(url_for(".index"))
 
     if form.success.data:
-        task.update_data(status_id=3, updated_by="Spielleitung")
+        try:
+            task.update_data(status_id=3, updated_by="Spielleitung")
+        except Exception as e:
+            flash(str(e), "danger")
+            return redirect(url_for(".show", id=id))
         return redirect(url_for(".index"))
 
-    form.comment.data = task.comment
+    form.comment_update.data = task.comment
+    form.comment_fail.data = task.comment
 
     return render_template("spielleitung/tasks/show.html",
                            back=url_for(".index"),
