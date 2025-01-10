@@ -130,11 +130,19 @@ class Task(BaseTable):
         data['status_last_updated'] = self.status_last_updated
         data['status_last_updated_str'] = self.status_last_updated.strftime(
             '%Y-%m-%d %H:%M:%S')
+
         timesince_s = (datetime.now() -
                        self.status_last_updated)
+        print(type(timesince_s))
+        print(timesince_s.total_seconds())
         data["timesince_s"] = timesince_s.total_seconds()
-        data["timesince"] = "{:01d}:{:02d}".format(
+        data["timesince"] = "{:02d}:{:02d}".format(
             timesince_s.seconds//3600, (timesince_s.seconds//60) % 60)
+
+        if timesince_s.total_seconds() > 60*60*24:
+            data["timesince"] = "{}d".format(
+                timesince_s.days) + " " + data["timesince"]
+
         data["timecolor"] = time2color(timesince_s.total_seconds())
 
         return data
