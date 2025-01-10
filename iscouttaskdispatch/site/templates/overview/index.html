@@ -31,10 +31,6 @@
                                 <div>
                                     <p class="h5 mb-0">{{ task.id }}. {{ task.name }}</p>
                                 </div>
-                                <!-- <div>
-                                    <span class="badge bg-{{ task.status.html_color }} text-white">{{ task.status.name
-                                        }}</span>
-                                </div> -->
                             </div>
                         </div>
                         <div class="card-body">
@@ -55,7 +51,18 @@
                             </div>
                             {% endif %}
 
-                            <p class="card-text fw-light">{{ task.format }}</p>
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <p class="card-text fw-light">{{ task.format }}</p>
+                                </div>
+                                <div>
+                                    <span class="badge bg-{{ task.timecolor }} border-secondary border border-2">
+                                        {{ task.timesince }}
+                                    </span>
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
                     {% endif %}
