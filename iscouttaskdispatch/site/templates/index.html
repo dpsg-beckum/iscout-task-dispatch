@@ -6,26 +6,33 @@
 <div>
     <h1>iScout Aufgabenverteilung</h1>
 
-    <div class="">
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-5 g-4">
-            {% for team in teams %}
-            <div class="col">
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-5 g-4 my-3">
+        {% for team in teams %}
+        <div class="col">
+            <a href="{{url_for('site.team.id.overview', id=team.id)}}" class="text-decoration-none">
                 <div class="card h-100 text-center">
                     <div class="card-body">
-                        <a href="{{url_for('site.team.id.overview', id=team.id)}}" class="text-decoration-none">
-                            {{ team.name }}
-                        </a>
+                        {{ team.name }}
                     </div>
                 </div>
-            </div>
-            {% endfor %}
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <hr class="my-5">
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-5 g-4 my-3 text-center">
+        <div class="col">
+            <h2><a href="{{ url_for('site.spielleitung.index') }}" class="btn btn-primary g-4">Spielleitung</a></h2>
+        </div>
+        <div class="col">
+            <h2><a href="{{ url_for('site.overview.index') }}" class="btn btn-primary g-4">Übersicht</a></h2>
         </div>
     </div>
 
 
-
-    <h2><a href="{{ url_for('site.spielleitung.index') }}" class="button">Spielleitung</a></h2>
-    <h2><a href="{{ url_for('site.overview.index') }}" class="button">Übersicht</a></h2>
 
 </div>
 {% endblock %}
