@@ -15,8 +15,8 @@ def index():
     tasks = Task.get_all()
     renderedtasks = [t.to_dict() for t in tasks]
     for task in renderedtasks:
-        task["description"] = task["description"][:100] + \
-            "..." if len(task["description"]) > 100 else task["description"]
+        task["description"] = task["description"][:70] + \
+            "..." if len(task["description"]) > 70 else task["description"]
 
     return render_template("spielleitung/tasks/index.html",
                            back=url_for("site.spielleitung.index"),

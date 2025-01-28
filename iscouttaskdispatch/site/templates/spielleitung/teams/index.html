@@ -6,26 +6,18 @@
 <div>
     <div class="page-div">
         <h1>Teams</h1>
-        <table style="width: 100%;">
+        <table class="table table-responsive table-hover">
             <thead>
                 <tr>
                     <th>teamID</th>
                     <th>name</th>
-                    <th>Description</th>
-                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for team in teams %}
-                <tr>
-                    <td>{{ team.teamID }}</td>
+                <tr class="position-relative" onclick="window.location=`{{ url_for('.edit', team_id=team.id) }}`;">
+                    <td>{{ team.id }}</td>
                     <td>{{ team.name }}</td>
-                    <td>{{ team.description }}</td>
-                    <td>
-                        <div>
-                            <a href="{{ url_for('.editTeam', teamID=team.teamID) }}">Edit</a>
-                        </div>
-                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -12,6 +12,36 @@ from .utils import time2color
 
 db = SQLAlchemy()
 
+
+class Settigns(db.Model):
+    __tablename__ = 'settings'
+    key = Column(String(255), primary_key=True)
+    value = Column(String(255))
+
+    @staticmethod
+    def get_via_key(key):
+        setting = db.session.query(Settigns).get(key)
+        if not setting:
+            raise ElementDoesNotExsist(
+                f"Setting mit dem Key \"{key}\" existiert nicht")
+        return setting
+
+    def set_value(self, value):
+        self.value = value
+        db.session.commit()
+        return self
+
+    def delete(self):
+        raise Exception("Settings können nicht gelöscht werden")
+
+    @staticmethod
+    def create_new(key, value):
+        setting = Settigns(key=key, value=value)
+        db.session.add(setting)
+        db.session.commit()
+        return setting
+
+
 T = TypeVar('T', bound='BaseTable')
 
 
@@ -25,6 +55,15 @@ class BaseTable(db.Model):
 
     @classmethod
     def get_via_id(cls: Type[T], id: int) -> T:
+        """ 
+        Gets an Element vie its ID
+
+        :param id: The ID of the Element
+
+        :raises ElementDoesNotExsist: If the Element does not exist
+
+        :return: The Element
+        """
         item = cls.query.get(id)
         if not item:
             raise ElementDoesNotExsist(
@@ -76,9 +115,8 @@ class Team(BaseTable):
     name = Column(String(255))
     tasks: Mapped[List[Task]] = relationship('Task', back_populates='team')
 
-    def change_data(self, name: None | str = None, description: None | str = None):
+    def change_data(self, name: None | str = None):
         self.name = name if name else self.name
-        self.description = description if description else self.description
         db.session.commit()
         return self
 
@@ -87,6 +125,28 @@ class Team(BaseTable):
         if not prevent_recursion:
             data['tasks'] = [task.to_dict(True) for task in self.tasks]
         return data
+
+    def delete(self):
+        available = True
+
+        for task in self.tasks:
+            if task.team_id == self.id:
+                print(task.name, task.status_id)
+                if task.status_id not in [2]:
+                    available = False
+
+        if available:
+            for task in self.tasks:
+                if task.team_id == self.id:
+                    if task.status_id in [2]:
+                        task.assign_to_team(None, True)
+                    else:
+                        raise Exception(
+                            "Team kann nicht gelöscht werden, da es noch Tasks enthält")
+            super().delete()
+        else:
+            raise Exception(
+                "Team kann nicht gelöscht werden, da es noch Tasks enthält")
 
     @staticmethod
     def create_new(name, check_exists=True):
@@ -133,8 +193,6 @@ class Task(BaseTable):
 
         timesince_s = (datetime.now() -
                        self.status_last_updated)
-        print(type(timesince_s))
-        print(timesince_s.total_seconds())
         data["timesince_s"] = timesince_s.total_seconds()
         data["timesince"] = "{:02d}:{:02d}".format(
             timesince_s.seconds//3600, (timesince_s.seconds//60) % 60)

@@ -64,3 +64,9 @@ class EditTaskForm(ITD_Form):
 class NewTeamForm(ITD_Form):
     name = StringField("Name", validators=[Optional()])
     submit = SubmitField("Create Team")
+
+
+class EditTeamForm(ITD_Form):
+    name = StringField("Name", validators=[Optional()])
+    submit = SubmitField("Update Team", name="submit")
+    delete = SubmitField("Delete Team", name="delete")
