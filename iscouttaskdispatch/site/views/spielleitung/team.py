@@ -35,7 +35,7 @@ def edit(team_id):
                 return redirect(url_for(".edit", team_id=team.id))
             return redirect(url_for(".index"))
 
-        if form.submit.data:
+        if form.update.data:
             try:
                 team.change_data(name=form.name.data)
             except Exception as e:
@@ -43,7 +43,7 @@ def edit(team_id):
                 return redirect(url_for(".edit", team_id=team.id))
             return redirect(url_for(".index"))
 
-    form.name.data = team.name
+    form.name.data = team.name if form.name.data is None else form.name.data
 
     return render_template("spielleitung/teams/edit.html",
                            back=url_for(".index"),

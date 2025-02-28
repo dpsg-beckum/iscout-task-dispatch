@@ -68,5 +68,5 @@ class NewTeamForm(ITD_Form):
 
 class EditTeamForm(ITD_Form):
     name = StringField("Name", validators=[Optional()])
-    submit = SubmitField("Update Team", name="submit")
+    update = SubmitField("Update Team", name="update")
     delete = SubmitField("Delete Team", name="delete")
