@@ -72,7 +72,7 @@ def edit(id):
     form: EditTaskForm = EditTaskForm()
     form.status.choices = [(-1, f"Unverändert ({task.status.name})")] + \
         [(status.id, status.name) for status in Status.get_all()]
-    form.team.choices = [(-1, f"Unverändert ({task.team.name if task.team else "Keins"})"), (0, f"Kein Team {"(Aktuell)" if not task.team else ""}")] +  \
+    form.team.choices = [(-1, f"Unverändert ({task.team.name if task.team else 'Keins'})"), (0, f"Kein Team {'(Aktuell)' if not task.team else ''}")] +  \
         [(team.id,
           f"#{team.id}: {team.name}" + (" (Aktuell)" if task.team and task.team.id is team.id else ""))
          for team in Team.get_all()]
