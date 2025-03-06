@@ -12,6 +12,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+    {% if request.args.get('refresh') %}
+    <meta http-equiv="refresh" content="{{ request.args.get('refresh') }}">
+    {% elif session.get('refresh') %}
+    <meta http-equiv="refresh" content="{{ session.get('refresh_interval') }}">
+    {% endif %}
     {% block head %}{% endblock %}
 </head>
 
@@ -88,6 +93,11 @@
                         </ol>
                     </nav>
                 </div>
+            </div>
+            <div class="d-flex">
+                {% if session.get('refresh') %}
+                <i class="bi bi-arrow-clockwise text-success"></i>
+                {% endif %}
             </div>
         </div>
     </div>

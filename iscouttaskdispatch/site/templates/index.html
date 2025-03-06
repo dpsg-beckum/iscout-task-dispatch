@@ -23,6 +23,17 @@
 
     <hr class="my-5">
 
+    <a href="{{ url_for('site.togglerefresh') }}" class="btn  btn-sm ms-2
+    {% if session.get('refresh') %}
+    btn-outline-success
+    {% else %}
+    btn-outline-danger
+    {% endif %}">
+        <i class="bi bi-arrow-clockwise"></i> Toggle refresh
+    </a>
+
+    <hr class="my-5">
+
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-5 g-4 my-3 text-center">
         <div class="col">
             <h2><a href="{{ url_for('site.spielleitung.index') }}" class="btn btn-primary g-4">Spielleitung</a></h2>

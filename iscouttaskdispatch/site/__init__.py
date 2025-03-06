@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, redirect, render_template, session, url_for
 
 from ..database.db import Team
 from ..database.exceptions import ElementDoesNotExsist
@@ -25,6 +25,8 @@ def add_header(response):
 
 @site.context_processor
 def inject_teams():
+    session["refresh"] = session.get("refresh", True)
+    session["refresh_interval"] = 20
     data = {}
     data["teams"] = [t.to_dict() for t in Team.get_all()]
     return data
@@ -33,3 +35,9 @@ def inject_teams():
 @site.route("/")
 def index():
     return render_template("index.html")
+
+
+@site.route("/togglerefresh")
+def togglerefresh():
+    session["refresh"] = not session.get("refresh", False)
+    return redirect(url_for("site.index"))
