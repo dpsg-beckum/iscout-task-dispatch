@@ -20,53 +20,10 @@
     {% block head %}{% endblock %}
 
     {% if session.get('translate') %}
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement(
-                { pageLanguage: 'en', includedLanguages: 'de', autoDisplay: true },
-                'google_translate_element'
-            );
-        }
-
-        function forceTranslateToGerman() {
-            var selectField = document.querySelector(".goog-te-combo");
-            if (selectField) {
-                selectField.value = "de";  // Set German as default
-                selectField.dispatchEvent(new Event('change')); // Trigger translation
-            }
-        }
-    </script>
-    <script type="text/javascript"
-        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     {% endif %}
-
-    <!-- CSS to Hide the Google Translate Bar -->
-    <style>
-        /* Hide the Google Translate top bar */
-        .goog-te-banner-frame {
-            display: none !important;
-        }
-
-        body {
-            top: 0px !important;
-        }
-
-        /* Hide the Google Translate dropdown */
-        #google_translate_element {
-            display: none;
-        }
-
-        .skiptranslate {
-            display: none;
-        }
-    </style>
-
 </head>
 
 <body>
-
-    <div id="google_translate_element" style="display: none;"></div>
-
     {% block navbar %}
     <div class="navbar navbar-expand bg-body-tertiary py-1">
         <div class="container-fluid">
