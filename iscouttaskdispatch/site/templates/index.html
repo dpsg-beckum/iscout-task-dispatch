@@ -23,14 +23,28 @@
 
     <hr class="my-5">
 
-    <a href="{{ url_for('site.togglerefresh') }}" class="btn  btn-sm ms-2
-    {% if session.get('refresh') %}
-    btn-outline-success
-    {% else %}
-    btn-outline-danger
-    {% endif %}">
-        <i class="bi bi-arrow-clockwise"></i> Toggle refresh
-    </a>
+    <div class="row text-center">
+        <div class="col">
+            <a href="{{ url_for('site.togglerefresh') }}" class="btn btn-sm ms-2
+            {% if session.get('refresh') %}
+            btn-outline-success
+            {% else %}
+            btn-outline-danger
+            {% endif %}">
+                <i class="bi bi-arrow-clockwise"></i> Toggle refresh
+            </a>
+        </div>
+        <div class="col">
+            <a href="{{ url_for('site.toggletranslate') }}" class="btn btn-sm ms-2
+            {% if session.get('translate') %}
+            btn-outline-success
+            {% else %}
+            btn-outline-danger
+            {% endif %}">
+                <i class="bi bi-translate"></i> Toggle Translation
+            </a>
+        </div>
+    </div>
 
     <hr class="my-5">
 

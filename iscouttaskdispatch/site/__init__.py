@@ -27,6 +27,7 @@ def add_header(response):
 def inject_teams():
     session["refresh"] = session.get("refresh", True)
     session["refresh_interval"] = 20
+    session["translate"] = session.get("translate", False)
     data = {}
     data["teams"] = [t.to_dict() for t in Team.get_all()]
     return data
@@ -40,4 +41,10 @@ def index():
 @site.route("/togglerefresh")
 def togglerefresh():
     session["refresh"] = not session.get("refresh", False)
+    return redirect(url_for("site.index"))
+
+
+@site.route("/toggletranslate")
+def toggletranslate():
+    session["translate"] = not session.get("translate", False)
     return redirect(url_for("site.index"))
