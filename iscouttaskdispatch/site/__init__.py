@@ -26,7 +26,7 @@ def add_header(response):
 @site.context_processor
 def inject_teams():
     session["refresh"] = session.get("refresh", True)
-    session["refresh_interval"] = 20
+    session["refresh_interval"] = 30
     session["translate"] = session.get("translate", False)
     data = {}
     data["teams"] = [t.to_dict() for t in Team.get_all()]

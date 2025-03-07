@@ -3,3 +3,28 @@ textarea#comment_fail,
 textarea#comment_update {
     height: 150px;
 }
+
+/* Hide Google Translate banner */
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+}
+
+/* Position the Google Translate widget */
+/* #google_translate_element {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1000;
+} */
+
+/* Move the Google Translate banner to the bottom */
+.goog-te-banner-frame.skiptranslate {
+    top: auto !important;
+    bottom: 0 !important;
+}
+
+/* Add padding to prevent content from being hidden behind the banner */
+body {
+    padding-bottom: 50px;
+    /* Adjust based on the banner's height */
+}
