@@ -1,11 +1,6 @@
-import time
-from datetime import datetime
-from pprint import pprint
+from flask import Blueprint, redirect, render_template, url_for
 
-from flask import Blueprint, abort, redirect, render_template, request, url_for
-
-from ....database.db import Task, Team
-from ....tools import formatDatetime
+from ....database.db import Team
 from ...forms import NewTeamForm
 from .team import id_site
 
