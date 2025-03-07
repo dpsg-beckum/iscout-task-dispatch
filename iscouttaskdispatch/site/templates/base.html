@@ -18,9 +18,6 @@
     <meta http-equiv="refresh" content="{{ session.get('refresh_interval') }}">
     {% endif %}
     {% block head %}{% endblock %}
-
-    {% if session.get('translate') %}
-    {% endif %}
 </head>
 
 <body>
@@ -97,12 +94,12 @@
                 </div>
             </div>
             <div class="d-flex">
-                <div>
+                <div class="mx-1">
                     {% if session.get('translate') %}
                     <i class="bi bi-translate text-success"></i>
                     {% endif %}
                 </div>
-                <div>
+                <div class="mx-1">
                     {% if session.get('refresh') %}
                     <i class="bi bi-arrow-clockwise text-success"></i>
                     {% endif %}
@@ -132,6 +129,7 @@
     </div>
     {% endblock %}
 
+    {% if session.get('translate') %}
     <!-- Google Translate Widget -->
     <div id="google_translate_element"></div>
     <script type="text/javascript">
@@ -145,6 +143,7 @@
     </script>
     <script type="text/javascript"
         src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    {% endif %}
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
